@@ -25,16 +25,16 @@ jobs:
                        --build-arg CERTIFICATE_KEY="${{ secrets.CERTIFICATE_KEY }}" \
                        --build-arg CERTIFICATE_CA_CRT="${{ secrets.CERTIFICATE_CA_CRT }}" \
                        --build-arg ENV="prod" \
-                       -t bank-of-lemons-web:latest .
-          docker save bank-of-lemons-web:latest > bank-of-lemons-web.tar
-          echo "::set-output name=image::bank-of-lemons-web.tar"  # Используете set-output для передачи данных
+                       -t motivora-web:latest .
+          docker save motivora-web:latest > motivora-web.tar
+          echo "::set-output name=image::motivora-web.tar"  # Используете set-output для передачи данных
 
       # 4. Загружаем артефакт Docker-образа.
       - name: Upload Docker image artifact
         uses: actions/upload-artifact@v4
         with:
           name: docker-image
-          path: bank-of-lemons-web.tar # Обратите внимание на название файла.
+          path: motivora-web.tar # Обратите внимание на название файла.
 
   deploy:
     runs-on: ubuntu-latest
@@ -57,39 +57,39 @@ jobs:
       # 3. Add server to known_hosts.
       - name: Add server to known_hosts
         run: |
-          ssh-keyscan -H bankoflemons.ru >> ~/.ssh/known_hosts
+          ssh-keyscan -H motivora.ru >> ~/.ssh/known_hosts
 
       # 4. Clean up old files from the server.
       - name: Clean up old files on server
         run: |
-          ssh root@bankoflemons.ru "rm -f /root/bank-of-lemons-web.tar"
+          ssh root@motivora.ru "rm -f /root/motivora-web.tar"
 
       # 5. Transfer Docker image to server.
       - name: Transfer Docker image to server
         uses: appleboy/scp-action@master
         with:
-          host: bankoflemons.ru
+          host: motivora.ru
           username: root
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: bank-of-lemons-web.tar
+          source: motivora-web.tar
           target: /root/
 
       # 6. Verify the file on server.
       - name: Verify Docker image file on server
         run: |
-          ssh root@bankoflemons.ru "ls -lh /root/bank-of-lemons-web.tar"
+          ssh root@motivora.ru "ls -lh /root/motivora-web.tar"
 
       # 7. Load Docker image on server.
       - name: Load Docker image on server
         run: |
-          ssh root@bankoflemons.ru "docker load -i /root/bank-of-lemons-web.tar"
+          ssh root@motivora.ru "docker load -i /root/motivora-web.tar"
 
       - name: Stop and remove existing container
         run: |
-          ssh root@bankoflemons.ru "docker stop bank-of-lemons-web || true"
-          ssh root@bankoflemons.ru "docker rm bank-of-lemons-web || true"
+          ssh root@motivora.ru "docker stop motivora-web || true"
+          ssh root@motivora.ru "docker rm motivora-web || true"
 
       # 8. Run Docker container on server.
       - name: Run Docker container on server
         run: |
-          ssh root@bankoflemons.ru "docker run -d -p 80:80 -p 443:443 --name bank-of-lemons-web --network my_network bank-of-lemons-web:latest"
+          ssh root@motivora.ru "docker run -d -p 80:80 -p 443:443 --name motivora-web --network my_network motivora-web:latest"

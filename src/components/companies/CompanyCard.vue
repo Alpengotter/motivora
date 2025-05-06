@@ -1,39 +1,69 @@
 <template>
-  <div class="employer">
+  <div class="employer glass">
     <div class="info-container">
+      <label class="container" v-if="selectMode">
+        <input type="checkbox" v-model="isItemSelected" @change="toggleSelection" />
+        <span class="checkmark"></span>
+      </label>
       <div class="info">
-        <p class="primary-text">{{ employee.lastName }} {{ employee.firstName }}</p>
+        <p class="primary-text">{{ company.title }}</p>
       </div>
     </div>
 
-    <div class="wallet">
+    <div class="wallet" @click="showCompanyInfo(company)">
       <div class="wallet-lemons">
-        <p class="wallet-text">{{ employee.lemons }} <img src="@/assets/tooth.png" alt="lemon" width="18" height="18" style="margin-left: 4px"/></p>
-
+        <p class="wallet-text">{{ company.lemons }} <img src="@/assets/tooth.png" alt="lemon" width="18" height="18" style="margin-left: 4px"/></p>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { User } from '@/types/user';
+import { computed } from 'vue';
+import type { Company } from '@/types/company'
+import { useSelectedCompanyStore } from '@/stores/selectedCompanyStore'
 
 const props = defineProps<{
-  employee: User;
+  company: Company;
+  selectMode: boolean;
+  showCompanyInfo: (company: Company) => void;
 }>();
 
+const selectedCompanyStore = useSelectedCompanyStore();
+
+const isItemSelected = computed(() => {
+  return selectedCompanyStore.selectedItems.some(item => item.id === props.company.id)
+})
+
+const toggleSelection = (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  if (target.checked) {
+    selectedCompanyStore.selectedItems.push(props.company);
+  } else {
+    selectedCompanyStore.selectedItems = selectedCompanyStore.selectedItems.filter((c) => c.id !== props.company.id);
+  }
+};
 </script>
 
 <style scoped>
+.title {
+  font-style: normal;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 29px;
+
+  margin-bottom: 27px;
+
+  color: var(--color-text);
+}
+
 .employer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 4px 15px;
+  padding: 16px 30px;
   border-radius: 24px;
   margin-bottom: 10px;
-
-  background-color: #fff;
 }
 
 .info-container {
@@ -48,18 +78,20 @@ const props = defineProps<{
   width: 250px;
 }
 
-.info>.primary-text {
-  font-size: 14px;
-}
-
-.department {
-  width: 300px;
-}
+.department {}
 
 .wallet {
   display: flex;
   flex-direction: row;
   padding: 6px 12px;
+  transition: .2s;
+  cursor: pointer;
+}
+
+.wallet:hover {
+  background-color: #ffffff80;
+  padding: 6px 12px;
+  border-radius: 99px;
   transition: .2s;
 }
 
@@ -73,7 +105,7 @@ const props = defineProps<{
 .wallet-text {
   font-style: normal;
   font-weight: 500;
-  font-size: 14px;
+  font-size: 18px;
   line-height: 22px;
 
   color: var(--color-text);

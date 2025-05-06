@@ -2,12 +2,11 @@
   <div class="employers-view">
     <div class="header">
       <div class="title-container">
-        <h1 class="title">Сотрудники</h1>
+        <h1 class="title">Компании</h1>
       </div>
       <div class="statistic-container">
-        <StatisticItem title="Сотрудников" :count="userStore.employerStatistic?.users" icon="employer" />
-<!--        <StatisticItem title="Алмазов" :count="userStore.employerStatistic?.diamonds" icon="diamonds" />-->
-        <StatisticItem title="Зубов" :count="userStore.employerStatistic?.lemons" icon="lemons" />
+        <StatisticItem title="Компаний" :count="companiesStore.statistic?.companies" icon="employer" />
+        <StatisticItem title="Зубов" :count="companiesStore.statistic?.lemons || 0" icon="lemons" />
       </div>
     </div>
     <div class="actions-wrapper">
@@ -25,18 +24,18 @@
     </div>
 
     <!-- selected employers list -->
-    <div class="employers-list selected" v-if="selectedEmployersStore.selectedItems.length">
-      <div class="accordion" :style="{ height: `${selectedEmployersStore.selectedItems.length * 15 + 72}px` }">
-        <EmployerCard class="accordion-item" v-for="(employee, index) in selectedEmployersStore.selectedItems.sort()"
-          :key="employee.id + 1000" :user="employee" :show-user-info="selectEmployer" :selectMode="true"
+    <div class="employers-list selected" v-if="selectedCompanyStore.selectedItems.length">
+      <div class="accordion" :style="{ height: `${selectedCompanyStore.selectedItems.length * 15 + 72}px` }">
+        <CompanyCard class="accordion-item" v-for="(company, index) in selectedCompanyStore.selectedItems.sort()"
+          :key="company.id + 1000" :company="company" :show-company-info="selectedCompany" :selectMode="true"
           :style="{ top: `${index * 15}px` }" />
       </div>
       <div><Button appearance="secondary" @click="toggleMultipleModal">Начислить выбранным</Button> </div>
     </div>
 
     <div class="employers-list" v-if="paginatedEmployees.length">
-      <EmployerCard v-for="employee in paginatedEmployees" :key="employee.id" :user="employee"
-        :show-user-info="selectEmployer" :selectMode="isSelectMode" />
+      <CompanyCard v-for="company in paginatedEmployees" :key="company.id" :company="company"
+        :show-company-info="selectedCompany" :selectMode="isSelectMode" />
       <div v-if="hasMore" v-lazy-load="loadMore">
         <div class="loading-spinner">
           <Preloader :width="50" />
@@ -44,7 +43,7 @@
       </div>
     </div>
 
-    <div class="loading-spinner" v-else-if="userStore.loading">
+    <div class="loading-spinner" v-else-if="companiesStore.loading">
       <Preloader :width="50" />
     </div>
     <div class="empty" v-else>
@@ -54,51 +53,49 @@
       <span>Обратитесь в поддержку.</span>
     </div>
 
-    <!-- employer info modal -->
-    <ModalView :show="isModalOpen" @close-modal="toggleModal" :user="selectedEmployer">
-      <template #content>
-        <EmployerModalContent :employerId="selectedEmployer!.id" :updateWallet="userStore.updateWallet"
-          :close="toggleModal" />
-      </template>
-    </ModalView>
+<!--     employer info modal -->
+<!--    <ModalView :show="isModalOpen" @close-modal="toggleModal" :user="selectedCompany">-->
+<!--      <template #content>-->
+<!--        <CompanyModalContent :employerId="selectedCompany!.id" :updateWallet="companiesStore.updateById"-->
+<!--          :close="toggleModal" />-->
+<!--      </template>-->
+<!--    </ModalView>-->
 
     <!-- new employer -->
-    <ModalView :show="isModalAddNewOpen" @close-modal="toggleAddNewModal">
-      <template #content>
-        <NewEmployerContent :close="toggleAddNewModal" />
-      </template>
-    </ModalView>
+<!--    <ModalView :show="isModalAddNewOpen" @close-modal="toggleAddNewModal">-->
+<!--      <template #content>-->
+<!--        <NewEmployerContent :close="toggleAddNewModal" />-->
+<!--      </template>-->
+<!--    </ModalView>-->
 
     <!-- multiple accrual employers -->
-    <ModalView :show="isModalMultipleOpen" @close-modal="toggleMultipleModal">
-      <template #content>
-        <EmployerMultipleAccrualModal :close="handleCloseMultipleAccrual" />
-      </template>
-    </ModalView>
+<!--    <ModalView :show="isModalMultipleOpen" @close-modal="toggleMultipleModal">-->
+<!--      <template #content>-->
+<!--        <CompanyMultipleAccrualModal :close="handleCloseMultipleAccrual" />-->
+<!--      </template>-->
+<!--    </ModalView>-->
 
   </div>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue';
-import EmployerCard from '../components/EmployerCard.vue';
-import { useUserStore } from '@/stores/userStores';
 import Button from '@/components/Button.vue';
 import Search from '@/components/Search.vue';
 import ModalView from '@/components/ModalView.vue';
 import StatisticItem from '@/components/StatisticItem.vue';
-import EmployerModalContent from '@/components/EmployerModalContent.vue';
 import NewEmployerContent from '@/components/NewEmployerContent.vue';
 import Preloader from '@/components/Preloader.vue';
 
-import type { User } from '@/types/user';
-import { useSelectedUsersStore } from '@/stores/selectedUsersStore';
-import EmployerMultipleAccrualModal from '@/components/EmployerMultipleAccrualModal.vue';
 import { useCompaniesStore } from '@/stores/companyStores'
+import { useSelectedCompanyStore } from '@/stores/selectedCompanyStore'
+import CompanyCard from '@/components/companies/CompanyCard.vue'
+import CompanyModalContent from '@/components/companies/CompanyModalContent.vue'
+import CompanyMultipleAccrualModal from '@/components/companies/CompanyMultipleAccrualModal.vue'
+import type { Company } from '@/types/company'
 
-const userStore = useUserStore();
 const companiesStore = useCompaniesStore();
-const selectedEmployersStore = useSelectedUsersStore();
+const selectedCompanyStore = useSelectedCompanyStore();
 
 const searchQuery = ref("");
 
@@ -107,21 +104,20 @@ const isModalAddNewOpen = ref(false);
 const isModalMultipleOpen = ref(false);
 
 const isSelectMode = ref(false);
-const selectedEmployer = ref<User | undefined>(undefined);
+const selectedCompany = ref<Company | undefined>(undefined);
 
 const currentPage = ref(1);
 const itemsPerPage = 25;
 const hasMore = ref(true);
 
 onMounted(async () => {
-  console.log(selectedEmployer.value);
-  await userStore.fetchUsers();
+  console.log(selectedCompany.value);
   await companiesStore.fetch();
-  await userStore.employersStat();
+  await companiesStore.getStatistic();
 });
 
-const selectEmployer = (user: User): void => {
-  selectedEmployer.value = user;
+const selectCompany = (company: Company): void => {
+  selectedCompany.value = company;
   toggleModal();
 }
 
@@ -144,35 +140,32 @@ const handleCloseMultipleAccrual = () => {
 }
 
 const clearSelection = () => {
-  selectedEmployersStore.selectedItems = [];
+  selectedCompanyStore.selectedItems = [];
 }
 
 const paginatedEmployees = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage;
   const end = start + itemsPerPage;
-  return filteredEmployees.value.slice(0, end);
+  return filteredCompanies.value.slice(0, end);
 });
 
 const loadMore = () => {
-  if (currentPage.value * itemsPerPage < filteredEmployees.value.length) {
+  if (currentPage.value * itemsPerPage < filteredCompanies.value.length) {
     currentPage.value++;
   }
-  hasMore.value = (currentPage.value * itemsPerPage < filteredEmployees.value.length);
+  hasMore.value = (currentPage.value * itemsPerPage < filteredCompanies.value.length);
 }
 
-const filteredEmployees = computed(() => {
+const filteredCompanies = computed(() => {
   const query = searchQuery.value.toLowerCase().trim();
 
-  if (!query) return userStore.users.filter(employee => !selectedEmployersStore.selectedItems.includes(employee));
+  if (!query) return companiesStore.data.filter(c => !selectedCompanyStore.selectedItems.includes(c));
 
-  return userStore.users.filter((employee) => {
+  return companiesStore.data.filter((c) => {
     const matchesQuery =
-      employee.firstName?.toLowerCase().includes(query) ||
-      employee.lastName?.toLowerCase().includes(query) ||
-      employee.email?.toLowerCase().includes(query) ||
-      employee.jobTitle?.toLowerCase().includes(query);
+      c.title?.toLowerCase().includes(query);
 
-    const isSelected = selectedEmployersStore.selectedItems.includes(employee);
+    const isSelected = selectedCompanyStore.selectedItems.includes(c);
 
     return matchesQuery && !isSelected;
   });

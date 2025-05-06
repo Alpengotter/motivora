@@ -1,10 +1,10 @@
 {
-  "name": "bank-of-lemons",
+  "name": "motivora",
   "version": "3.3.2",
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite --host localhost.bankoflemons.ru",
+    "dev": "vite --host localhost",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
     "test:unit": "vitest",

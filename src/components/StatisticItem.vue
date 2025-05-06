@@ -9,7 +9,7 @@
           <img src="@/assets/gem.png" alt="gem" width="18" height="18"/>
         </div>
         <div v-if="icon === 'lemons'">
-          <img src="@/assets/lemon.png" alt="lemon" width="18" height="18"/>
+          <img src="@/assets/tooth.png" alt="lemon" width="18" height="18"/>
         </div>
       </div>
       <div>

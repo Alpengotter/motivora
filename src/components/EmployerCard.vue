@@ -12,19 +12,12 @@
     </div>
 
     <div class="department">
-      <p class="secondary-text">{{ user.jobTitle }}</p>
+      <p class="secondary-text">{{ getCompanyTitle(user.companyId) }}</p>
     </div>
 
     <div class="wallet" @click="showUserInfo(user)">
       <div class="wallet-lemons">
-        <p class="wallet-text">{{ user.lemons }} <img src="@/assets/lemon.png" alt="lemon" width="18" height="18" style="margin-left: 4px"/></p>
-
-      </div>
-
-      <div class="divider" />
-
-      <div class="wallet-diamonds">
-        <p class="wallet-text">{{ user.diamonds }} <img src="@/assets/gem.png" alt="gem" width="18" height="18" style="margin-left: 4px"/></p>
+        <p class="wallet-text">{{ user.lemons }} <img src="@/assets/tooth.png" alt="lemon" width="18" height="18" style="margin-left: 4px"/></p>
       </div>
     </div>
   </div>
@@ -34,6 +27,7 @@
 import { useSelectedUsersStore } from '@/stores/selectedUsersStore';
 import type { User } from '@/types/user';
 import { computed } from 'vue';
+import { useCompaniesStore } from '@/stores/companyStores'
 
 const props = defineProps<{
   user: User;
@@ -42,6 +36,7 @@ const props = defineProps<{
 }>();
 
 const selectedEmployersStore = useSelectedUsersStore();
+const companies = useCompaniesStore();
 
 const isItemSelected = computed(() => {
   return selectedEmployersStore.selectedItems.some(item => item.id === props.user.id)
@@ -55,6 +50,14 @@ const toggleSelection = (event: Event) => {
     selectedEmployersStore.selectedItems = selectedEmployersStore.selectedItems.filter((user) => user.id !== props.user.id);
   }
 };
+
+const getCompanyTitle = ((companyId: number) => {
+  const company = companies.getByIdState(companyId);
+  if (company) {
+    return company.title;
+  }
+  return '';
+})
 </script>
 
 <style scoped>

@@ -5,15 +5,22 @@ import StatisticsView from '@/views/StatisticsView.vue'
 import ReportsView from '@/views/ReportsView.vue'
 import OrdersView from '@/views/OrdersView.vue'
 import { useAuthStore } from '@/stores/useAuthStore'
+import CompaniesView from '@/views/CompaniesView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      name: 'home',
+      name: 'employers',
+      component: EmployersView,
+      meta: { requiresAuth: false, roles: ['ADMIN'] },
+    },
+    {
+      path: '/orders',
+      name: 'orders',
       component: OrdersView,
-      meta: { requiresAuth: true, roles: ['ADMIN'] },
+      meta: { requiresAuth: false, roles: ['ADMIN'] },
     },
     {
       path: '/login',
@@ -22,22 +29,22 @@ const router = createRouter({
       meta: { requiresAuth: false, roles: ['ADMIN'] },
     },
     {
-      path: '/employers',
-      name: 'employers',
-      component: EmployersView,
-      meta: { requiresAuth: true, roles: ['ADMIN'] },
-    },
-    {
       path: '/statistics',
       name: 'statistics',
       component: StatisticsView,
-      meta: { requiresAuth: true, roles: ['ADMIN'] },
+      meta: { requiresAuth: false, roles: ['ADMIN'] },
     },
     {
       path: '/reports',
       name: 'reports',
       component: ReportsView,
-      meta: { requiresAuth: true, roles: ['ADMIN'] },
+      meta: { requiresAuth: false, roles: ['ADMIN'] },
+    },
+    {
+      path: '/companies',
+      name: 'companies',
+      component: CompaniesView,
+      meta: { requiresAuth: false, roles: ['ADMIN'] },
     },
   ],
 })

@@ -16,16 +16,16 @@ export default defineConfig(({ command, mode }) => {
 
   return {
     server: {
-      host: 'localhost.bankoflemons.ru',
+      host: 'localhost',
       port: 5173,
       ...(isDevelopment && {
         proxy: {
           '/api/v1': {
-            target: 'https://uat.bankoflemons.ru',
+            target: 'http://localhost:8080',
             changeOrigin: true,
             secure: false,
             headers: {
-              Origin: 'https://uat.bankoflemons.ru',
+              Origin: 'http://localhost:8080',
             },
             credentials: 'include',
           },
