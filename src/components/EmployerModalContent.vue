@@ -5,17 +5,35 @@
   <div class="wrapper" v-if="employer && !userStore.loading">
     <header>
       <h2 class="fullname">{{ employer?.lastName }} {{ employer?.firstName }}</h2>
-      <span class="email">{{ employer?.email }}</span>
+<!--      <span class="email">{{ employer?.email }}</span>-->
     </header>
     <main>
       <div class="wallet">
         <p><img src="@/assets/tooth.png" alt="lemon" width="30" height="30" style="margin-right: 4px"/><span>{{ employer?.lemons }}</span>
-          <span v-if="activeCurrencyIndex === 0 && inputValue.length" class="change-value"
+          <span v-if="activeCurrencyIndex === 0 && inputValue" class="change-value"
             :class="{ 'add': activeOperationIndex === 0, 'remove': activeOperationIndex === 1 }">
             <span v-if="activeOperationIndex === 0">+</span>
             <span v-else>-</span>{{ inputValue }}
           </span>
         </p>
+      </div>
+
+      <div class="nominations">
+        <VaSelect
+          v-model="nominations"
+          :options="NOMINATIONS_PERSONAL"
+          searchable
+          clearable
+          highlight-matched-text
+          placeholder="Выберите номинацию"
+          style="width: 100%; background-color: rgba(0, 0, 0, 0.1); height: 40px"
+        >
+          <template #option="{ option, selectOption }">
+            <div class="nominations-item" @click.prevent="selectOption(option)">
+              {{ option?.text }}
+            </div>
+          </template>
+        </VaSelect>
       </div>
 
       <div class="actions-wrapper">
@@ -33,25 +51,20 @@
               <span>{{ operation }}</span>
             </div>
           </div>
-          <input class="input" type="text" placeholder="0" v-model="inputValue">
+          <input class="input balance" type="text" placeholder="0" v-model="inputValue">
+          <input class="input" type="text" placeholder="Комментарий" v-model="commentValue">
 
+          <Button appearance="primary" class="submit" @click="handleSubmit(employer)" :disabled="!inputValue"
+                  :class="{ 'disabled': !inputValue }">
+            Начислить
+          </Button>
         </div>
 
         <div class="comment-container">
-          <input class="input" type="text" placeholder="Комментарий" v-model="commentValue">
-          <div class="checkbox-wrapper">
-            <label class="checkbox-container">
-              <input type="checkbox" v-model="isNotify" />
-              <span class="checkbox-checkmark"></span>
-            </label>
-            <p>Уведомить о начислении</p>
-          </div>
+
         </div>
 
-        <Button appearance="primary" class="submit" @click="handleSubmit(employer)" :disabled="!inputValue.length"
-          :class="{ 'disabled': !inputValue.length }">
-          OK
-        </Button>
+
       </div>
 
       <div class="history">
@@ -81,9 +94,12 @@
 import Button from '@/components/Button.vue';
 import { useUserStore } from '@/stores/userStores';
 import type { User } from '@/types/user';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue'
 import Preloader from './Preloader.vue';
 import HistoryComponent from './history/HistoryComponent.vue';
+import { VaSelect } from 'vuestic-ui'
+import { NOMINATIONS_PERSONAL } from '@/constants/nominations'
+import type { Nomination } from '@/types/nomination'
 
 const userStore = useUserStore();
 
@@ -92,11 +108,15 @@ const currencies = ['🦷'];
 
 const activeOperationIndex = ref(0);
 const activeCurrencyIndex = ref(0);
-const inputValue = ref('');
+const inputValue = ref<number>(0);
 const employer = ref<User | undefined>(undefined);
 
-const isNotify = ref<boolean>(false);
 const commentValue = ref<string>('')
+const nominations = ref<Nomination>(null)
+
+watch(nominations, () => {
+  inputValue.value = nominations.value.value;
+})
 
 onMounted(async () => {
   try {
@@ -121,18 +141,18 @@ const handleSubmit = async (employer: User | undefined) => {
   let lemons = employer.lemons || 0;
   let diamonds = employer.diamonds || 0;
 
-  if (inputValue.value.length) {
+  if (inputValue.value) {
     if (activeCurrencyIndex.value === 0) {
       if (activeOperationIndex.value === 0) {
-        lemons += parseInt(inputValue.value);
+        lemons += inputValue.value;
       } else {
-        lemons -= parseInt(inputValue.value);
+        lemons -= inputValue.value;
       }
     } else {
       if (activeOperationIndex.value === 0) {
-        diamonds += parseInt(inputValue.value);
+        diamonds += inputValue.value;
       } else {
-        diamonds -= parseInt(inputValue.value);
+        diamonds -= inputValue.value;
       }
     }
   }
@@ -146,14 +166,10 @@ const handleSubmit = async (employer: User | undefined) => {
   }
 
   try {
-    await props.updateWallet(employer.id, { lemons, diamonds, comment: commentValue.value });
+    await props.updateWallet(employer.id, { lemons, diamonds, comment: `${nominations.value.text} ${commentValue.value}` });
     await refresh();
 
-    if (isNotify.value) {
-      sendNotification(employer.email, parseInt(inputValue.value), lemons > 0 ? 'lemons' : 'diamonds', commentValue.value)
-    }
-
-    inputValue.value = '';
+    inputValue.value = 0;
     commentValue.value = ''
   } catch (error) {
     console.error('Error updating wallet:', error);
@@ -199,7 +215,23 @@ const props = defineProps<{
 }>()
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+.nominations {
+  display: flex;
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.nominations-item {
+  white-space: nowrap;
+  padding: 8px;
+}
+
+.nominations-content {
+  width: 100%;
+  white-space: nowrap;
+}
+
 header {
   display: flex;
   flex-direction: column;
@@ -338,11 +370,14 @@ footer {
   font-size: 14px;
 }
 
+.balance {
+  width: 80px;
+}
+
 .submit {
-  width: 40px;
   height: 40px;
   border-radius: 99px;
-  padding: 0;
+  padding: 0 16px;
   font-size: 14px;
 }
 
