@@ -73,7 +73,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useOrderStores } from '@/stores/orderStores';
-import Button from '../components/Button.vue';
+import Button from '@/components/Button.vue';
 import OrderItem from '../components/orders/OrderItem.vue';
 import { useUserStore } from '@/stores/userStores';
 import Preloader from '@/components/Preloader.vue';

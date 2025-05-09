@@ -114,6 +114,7 @@ const handleSubmit = async () => {
     firstName: firstName.value,
     lastName: surname.value,
     email: email.value,
+    companyId: 1,
     lemons: 0,
     diamonds: 0,
     userRole: "USER",

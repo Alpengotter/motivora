@@ -37,7 +37,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import Button from './Button.vue';
+import Button from '@/components/Button.vue';
 
 const props = defineProps<{
   currencies: string[];

@@ -49,7 +49,7 @@ export const useAuthStore = defineStore('auth', {
       switch (response.status) {
         case 200: {
           const data: LoginResponse = await response.json();
-          console.log(data);
+
           if (!data.token) {
             throw new Error('Invalid token received');
           }
@@ -82,11 +82,6 @@ export const useAuthStore = defineStore('auth', {
     },
 
     async login(username: string, password: string): Promise<void> {
-      // if (!this.validateEmail(username)) {
-      //   this.errorMessage = 'Неверный формат email';
-      //   return;
-      // }
-
       this.isLoading = true;
       this.errorMessage = '';
 

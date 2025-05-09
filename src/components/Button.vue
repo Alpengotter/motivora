@@ -1,5 +1,5 @@
 <template>
-  <button class="ui-button" :class="[props.appearance]" v-bind="$attrs" type="button">
+  <button class="ui-button" :class="[props.appearance]" v-bind="$attrs">
     <slot></slot>
   </button>
 </template>
@@ -25,7 +25,7 @@ defineOptions({
 
 .primary {
   background-color: var(--vt-c-primary);
-  color: var(--color-text);
+  color: var(--vt-c-white);
   border: none;
   font-size: 14px;
   font-weight: 600;
@@ -35,8 +35,7 @@ defineOptions({
 
 .secondary,
 .attention {
-  background-color: #ffffff90;
-  color: var(--color--secondary-text);
+
   border: none;
   font-size: 14px;
   font-weight: 500;
@@ -59,6 +58,11 @@ defineOptions({
 
 .attention {
   background-color: #FF746C;
-  color: #fff;
+  color: var(--vt-c-white);
+}
+
+.secondary {
+  background-color: #ffffff90;
+  color: var(--vt-c-black);
 }
 </style>

@@ -21,11 +21,11 @@ export default defineConfig(({ command, mode }) => {
       ...(isDevelopment && {
         proxy: {
           '/api/v1': {
-            target: 'http://localhost:8080',
+            target: 'https://motivora.ru',
             changeOrigin: true,
             secure: false,
             headers: {
-              Origin: 'http://localhost:8080',
+              Origin: 'https://motivora.ru',
             },
             credentials: 'include',
           },

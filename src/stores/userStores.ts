@@ -2,7 +2,6 @@
 import { defineStore } from 'pinia'
 import { type User } from '@/types/user'
 import { makeRequest } from '@/utils/makeRequest'
-import { mockUsers } from '@/mocks/users'
 
 interface UserState {
   users: User[]

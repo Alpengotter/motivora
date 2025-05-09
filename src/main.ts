@@ -9,6 +9,9 @@ import lazyLoad from './directives/lazy-load'
 import type { Router } from 'vue-router';
 import { useAuthStore } from '@/stores/useAuthStore'
 
+import { createVuestic } from "vuestic-ui";
+import "vuestic-ui/css";
+
 declare module 'pinia' {
   export interface PiniaCustomProperties {
     router: Router;
@@ -23,6 +26,7 @@ pinia.use(({store}) => {
 
 app.use(pinia)
 app.use(router)
+app.use(createVuestic())
 
 app.mount('#app')
 
