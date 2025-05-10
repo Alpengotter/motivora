@@ -13,7 +13,7 @@
       <!-- search field -->
       <div class="filter-container">
         <Search placeholder="Поиск" v-model:model-value="searchQuery" />
-        <MultiSelect v-model="filteredByCompany" :options="companiesStore.data" optionLabel="title" optionValue="id" showClear
+        <MultiSelect v-model="filteredByCompany" :options="companiesStore.data" optionLabel="name" optionValue="id" showClear
           placeholder="Выберите компанию" class="select-company" />
       </div>
 
@@ -31,6 +31,7 @@
           :title="`${employee.lastName} ${employee.firstName}`" :subtitle="employee.email"
           :description="getDescription(employee)" :wallet="[{ value: employee.lemons, currency: 'tooth' }]"
           :wallet-action="() => selectEmployer(employee)" v-bind:key="employee.id + 1000" class="accordion-item"
+          show-checkbox
           :style="{ top: `${index * 15}px` }" />
       </div>
       <div>
@@ -42,6 +43,7 @@
       <ListItemView v-for="employee in paginatedEmployees" :id="employee.id"
         :title="`${employee.lastName} ${employee.firstName}`" :subtitle="employee.email"
         :description="getDescription(employee)" :wallet="[{ value: employee.lemons, currency: 'tooth' }]"
+        show-checkbox
         :wallet-action="() => selectEmployer(employee)" v-bind:key="employee.id" />
       <div v-if="hasMore" v-lazy-load="loadMore">
         <div class="loading-spinner">
@@ -83,7 +85,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, computed } from 'vue'
+import { onMounted, ref, computed, watch } from 'vue'
 import { useUserStore } from '@/stores/userStores'
 import Button from '@/components/Button.vue'
 import Search from '@/components/Search.vue'
@@ -130,15 +132,22 @@ const getDescription = (u: User) => {
     return u.jobTitle
   }
 
-  if (u.companyId) {
-    const company = companiesStore.getByIdState(u.companyId)
-    if (company) {
-      return company.title
-    }
+  if (u.clinics.length) {
+    return u.clinics.join(', ')
   }
 
   return ''
 }
+
+watch([searchQuery, filteredByCompany], () => {
+  userStore.searchEmployers({
+    searchParameter: searchQuery.value,
+    clinicIds: filteredByCompany.value || [],
+    page: currentPage.value,
+    size: itemsPerPage,
+    sort: ['lemons,desc']
+  })
+})
 
 const selectEmployer = (user: User): void => {
   selectedEmployer.value = user

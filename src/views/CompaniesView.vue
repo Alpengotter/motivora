@@ -18,11 +18,13 @@
     </div>
 
     <div class="employers-list" v-if="filteredCompanies.length">
-      <CompanyCard
+      <ListItemView
         v-for="company in filteredCompanies"
-        :key="company.id"
-        :company="company"
-        :show-user-info="selectCompany"
+        v-bind:key="company.id"
+        :id="company.id"
+        :title="company.name"
+        :wallet="[{value: company.currency, currency: 'tooth'}]"
+        :wallet-action="() => selectCompany(company)"
       />
     </div>
 
@@ -33,17 +35,6 @@
       <span> Список клиник не загружен. </span>
       <span>Обратитесь в поддержку.</span>
     </div>
-
-    <!-- employer info modal -->
-    <ModalView :show="isModalOpen" @close-modal="toggleModal" :user="selectedCompany">
-      <template #content>
-        <CompanyModalContent
-          :company-id="selectedCompany!.id"
-          :updateWallet="companiesStore.updateById"
-          :close="toggleModal"
-        />
-      </template>
-    </ModalView>
   </div>
 </template>
 
@@ -54,9 +45,9 @@ import Search from '@/components/Search.vue'
 import ModalView from '@/components/ModalView.vue'
 import StatisticItem from '@/components/StatisticItem.vue'
 import Preloader from '@/components/Preloader.vue'
+import ListItemView from '@/components/ListItemView.vue'
 
 import { useCompaniesStore } from '@/stores/companyStores'
-import CompanyModalContent from '@/components/companies/CompanyModalContent.vue'
 import type { Company } from '@/types/company'
 
 const companiesStore = useCompaniesStore()
@@ -65,7 +56,6 @@ const searchQuery = ref('')
 
 const isModalOpen = ref(false)
 
-const isSelectMode = ref(false)
 const selectedCompany = ref<Company | undefined>(undefined)
 
 onMounted(async () => {
@@ -86,8 +76,8 @@ const selectCompany = (c: Company): void => {
 const filteredCompanies = computed(() => {
   const query = searchQuery.value.toLowerCase().trim()
 
-  return companiesStore.data.filter((employee) => {
-    return employee.title?.toLowerCase().includes(query)
+  return companiesStore.data.filter((c) => {
+    return c.name?.toLowerCase().includes(query)
   })
 })
 </script>

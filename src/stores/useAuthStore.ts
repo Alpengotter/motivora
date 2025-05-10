@@ -50,11 +50,11 @@ export const useAuthStore = defineStore('auth', {
         case 200: {
           const data: LoginResponse = await response.json();
 
-          if (!data.token) {
+          if (!data.accessToken) {
             throw new Error('Invalid token received');
           }
-          this.token = data.token;
-          Cookies.set('token', data.token, {
+          this.token = data.accessToken;
+          Cookies.set('token', data.accessToken, {
             expires: 7
           });
           break;
@@ -90,7 +90,7 @@ export const useAuthStore = defineStore('auth', {
 
       try {
         const credentials: LoginCredentials = {
-          username: username.trim(),
+          email: username.trim(),
           password,
         };
 

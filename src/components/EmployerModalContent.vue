@@ -30,6 +30,7 @@
         >
           <template #option="{ option, selectOption }">
             <div class="nominations-item" @click.prevent="selectOption(option)">
+              <!-- @vue-ignore -->
               {{ option?.text }}
             </div>
           </template>
@@ -112,10 +113,10 @@ const inputValue = ref<number>(0);
 const employer = ref<User | undefined>(undefined);
 
 const commentValue = ref<string>('')
-const nominations = ref<Nomination>(null)
+const nominations = ref<Nomination | null>(null)
 
 watch(nominations, () => {
-  inputValue.value = nominations.value.value;
+  inputValue.value = nominations.value?.value || 0;
 })
 
 onMounted(async () => {
@@ -166,7 +167,7 @@ const handleSubmit = async (employer: User | undefined) => {
   }
 
   try {
-    await props.updateWallet(employer.id, { lemons, diamonds, comment: `${nominations.value.text} ${commentValue.value}` });
+    await props.updateWallet(employer.id, { lemons, diamonds, comment: `${nominations.value?.text} ${commentValue.value}` });
     await refresh();
 
     inputValue.value = 0;

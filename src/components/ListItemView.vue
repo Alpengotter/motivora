@@ -14,6 +14,7 @@ const props = defineProps<{
   description?: string
   wallet: Wallet[]
   walletAction?: () => void
+  showCheckbox?: boolean
 }>()
 
 const { isSelected } = useSelection({ id: props.id })
@@ -21,16 +22,19 @@ const { isSelected } = useSelection({ id: props.id })
 
 <template>
   <div class="card glass">
-    <div class="section left">
-      <Checkbox v-model="isSelected" binary size="large"/>
-      <div class="info">
-        <p class="primary-text">{{ title }}</p>
-        <p class="secondary-text">{{ subtitle }}</p>
+    <div class="section">
+      <div class="info-container">
+        <Checkbox v-model="isSelected" binary size="large" v-if="showCheckbox"/>
+        <div class="info">
+          <p class="primary-text">{{ title }}</p>
+          <p class="secondary-text">{{ subtitle }}</p>
+        </div>
+      </div>
+      <div class="description">
+        <p class="secondary-text">{{ description }}</p>
       </div>
     </div>
-    <div class="section">
-      <p class="secondary-text">{{ description }}</p>
-    </div>
+
     <div class="section wallet" @click="walletAction">
       <div class="wallet-content" v-for="(item, i) in wallet" v-bind:key="item.currency">
         <p class="wallet-text">
@@ -66,17 +70,20 @@ const { isSelected } = useSelection({ id: props.id })
 
 .section {
   display: flex;
+  align-items: center;
+
+  .info-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 400px;
+    gap: 14px;
+  }
 
   .info {
     display: flex;
     flex-direction: column;
   }
-}
-
-.left {
-  display: flex;
-  align-items: center;
-  gap: 18px;
 }
 
 .wallet {

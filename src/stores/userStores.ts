@@ -2,6 +2,7 @@
 import { defineStore } from 'pinia'
 import { type User } from '@/types/user'
 import { makeRequest } from '@/utils/makeRequest'
+import type { Params } from '@/types/params'
 
 interface UserState {
   users: User[]
@@ -40,7 +41,7 @@ export const useUserStore = defineStore('users', {
   actions: {
     // Fetch all users
     // FIXME: rename to employers
-    async fetchUsers(offset = 0, limit = 200) {
+    async fetchUsers(offset = 0, limit = 25) {
       this.loading = true
       this.error = null
       try {
@@ -57,12 +58,29 @@ export const useUserStore = defineStore('users', {
       }
     },
 
-    async searchEmployers(searchParameter: string) {
+    async searchEmployers(params: Params) {
       this.loading = true
       this.error = null
+
+      const search = new URLSearchParams()
+
+      for (const key in params) {
+        if (params.hasOwnProperty(key)) {
+          // @ts-ignore
+          const value = params[key]
+
+          if (value === undefined || value === null) continue
+
+          if (Array.isArray(value)) {
+            value.forEach((v) => search.append(key, String(v)))
+          } else {
+            search.append(key, String(value))
+          }
+        }
+      }
       try {
         const response = await makeRequest<User[]>(
-          `employers/find-by-param?searchParameter=${searchParameter}`,
+          `employers/find-by-param?${search}`,
           'get',
         )
 

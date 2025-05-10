@@ -2,7 +2,7 @@
   <div class="employer glass">
     <div class="info-container">
       <div class="info">
-        <p class="primary-text">{{ company.title }}</p>
+        <p class="primary-text">{{ company.name }}</p>
       </div>
     </div>
 
@@ -11,7 +11,7 @@
 
     <div class="wallet" @click="showUserInfo(company)">
       <div class="wallet-lemons">
-        <p class="wallet-text">{{ company.lemons }} <img src="@/assets/tooth.png" alt="lemon" width="18" height="18" style="margin-left: 4px"/></p>
+        <p class="wallet-text">{{ company.currency }} <img src="@/assets/tooth.png" alt="lemon" width="18" height="18" style="margin-left: 4px"/></p>
       </div>
     </div>
   </div>

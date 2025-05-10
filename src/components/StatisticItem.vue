@@ -13,8 +13,8 @@
         </div>
       </div>
       <div>
-        <Preloader :width="20" v-if="!count" />
-        <p v-if="count" class="statistic-count">{{ count }}</p>
+        <Preloader :width="20" v-if="count === null" />
+        <p v-if="count !== null" class="statistic-count">{{ count || 0 }}</p>
       </div>
     </div>
     <p class="statistic-title">{{ title }}</p>

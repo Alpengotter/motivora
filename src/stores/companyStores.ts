@@ -44,7 +44,7 @@ export const useCompaniesStore = defineStore('companies', {
       this.error = null
       try {
         this.data = await makeRequest<Company[]>(
-          `companies?offset=${offset}&limit=${limit}`,
+          `clinics/find-by-name`,
           'get',
         )
       } catch (error) {
@@ -59,7 +59,7 @@ export const useCompaniesStore = defineStore('companies', {
       this.error = null
       try {
         this.data = await makeRequest<Company[]>(
-          `companies/find-by-param?searchParameter=${searchParameter}`,
+          `clinics/find-by-param?searchParameter=${searchParameter}`,
           'get',
         )
       } catch (error) {
@@ -74,7 +74,7 @@ export const useCompaniesStore = defineStore('companies', {
       this.error = null
 
       try {
-        this.statistic = await makeRequest<CompanyStatistic>(`companies/get-all-stat`, 'get')
+        this.statistic = await makeRequest<CompanyStatistic>(`clinics/get-all-stat`, 'get')
       } catch (error) {
         this.error = error instanceof Error ? error.message : 'Failed to fetch stat'
       } finally {
@@ -117,7 +117,7 @@ export const useCompaniesStore = defineStore('companies', {
       this.error = null
 
       try {
-        return await makeRequest<Company>(`companies/${id}`, 'get')
+        return await makeRequest<Company>(`clinics/${id}`, 'get')
       } catch (error) {
         this.error = error instanceof Error ? error.message : 'Failed to get user '
       } finally {
@@ -130,7 +130,7 @@ export const useCompaniesStore = defineStore('companies', {
       this.error = null
 
       try {
-        const response = await makeRequest<Company>(`companies/status/${id}`, 'put', {
+        const response = await makeRequest<Company>(`clinics/status/${id}`, 'put', {
           isActive: false,
         })
 
@@ -150,7 +150,7 @@ export const useCompaniesStore = defineStore('companies', {
       this.error = null
 
       try {
-        const response = await makeRequest<Company>(`companies`, 'post', user)
+        const response = await makeRequest<Company>(`clinics`, 'post', user)
 
         await this.fetch()
         await this.getStatistic()
@@ -178,7 +178,7 @@ export const useCompaniesStore = defineStore('companies', {
       this.error = null
 
       try {
-        const response = await makeRequest<Company>(`companies/multiple-currency`, 'put', {
+        const response = await makeRequest<Company>(`clinics/multiple-currency`, 'put', {
           userIds,
           currency,
           count,

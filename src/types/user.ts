@@ -3,7 +3,7 @@ export interface User {
   firstName: string
   lastName: string
   jobTitle: string | null
-  companyId: number
+  clinics: string[]
   email: string
   lemons: number
   diamonds: number

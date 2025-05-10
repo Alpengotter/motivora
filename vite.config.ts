@@ -16,7 +16,7 @@ export default defineConfig(({ command, mode }) => {
 
   return {
     server: {
-      host: 'localhost',
+      host: 'localhost.motivora.ru',
       port: 5173,
       ...(isDevelopment && {
         proxy: {
