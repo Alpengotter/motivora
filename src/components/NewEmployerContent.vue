@@ -12,6 +12,8 @@
       <p class="error-message">{{ errors.email }}</p>
       <input v-model.trim="department" type="text" class="input" placeholder="Должность">
       <p class="error-message">{{ errors.department }}</p>
+      <Select v-model="companyId" :options="companyStore.data" optionLabel="title" placeholder="Выберите компанию" class="input"/>
+      <p class="error-message">{{ errors.department }}</p>
     </main>
     <footer>
       <Button appearance="primary" class="create-button">
@@ -25,13 +27,17 @@ import Button from '@/components/Button.vue';
 import { useUserStore } from '@/stores/userStores';
 import type { User } from '@/types/user';
 import { computed, onMounted, ref } from 'vue';
+import Select from 'primevue/select';
+import { useCompaniesStore } from '@/stores/companyStores';
 
 const userStore = useUserStore();
+const companyStore = useCompaniesStore();
 
 const surname = ref('');
 const firstName = ref('');
 const email = ref('');
 const department = ref('');
+const companyId = ref<number | null>(null);
 
 const errors = ref({
   surname: '',
