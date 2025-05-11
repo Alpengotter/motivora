@@ -112,7 +112,7 @@
           />
         </svg>
 
-        <span class="button-title" @click="deactivate">Деактивировать</span></Button
+        <span class="button-title" >Деактивировать</span></Button
       >
     </footer>
   </div>

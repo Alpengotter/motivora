@@ -204,10 +204,10 @@ const loadMore = async () => {
       page: currentPage.value,
       size: itemsPerPage,
       sort: ['lemons,desc']
-    })
-
+    }, )
+    
     currentPage.value += 1
-    hasMore.value = currentPage.value < (userStore.employerStatistic?.users || 0) / itemsPerPage
+    hasMore.value = currentPage.value < Math.floor((userStore.employerStatistic?.users || 0) / itemsPerPage)
   } catch (error) {
     hasMore.value = false
   }

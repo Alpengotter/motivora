@@ -43,6 +43,7 @@ import Search from '@/components/Search.vue';
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
 import { debounce } from '@/utils/debounce'
+import type { Company } from '@/types/company'
 
 const searchQuery = ref('');
 
