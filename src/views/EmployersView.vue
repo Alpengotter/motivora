@@ -111,9 +111,6 @@ import ListItemView from '@/components/ListItemView.vue'
 import HistoryModal from '@/components/modals/HistoryModal.vue'
 import _ from 'lodash'
 
-//@ts-ignoreEmployerCard.vue
-import SortIcon from '@/assets/icons/sort.svg?component';
-
 const userStore = useUserStore()
 const companiesStore = useCompaniesStore()
 const selectedEmployersStore = useSelectedUsersStore()
@@ -134,12 +131,7 @@ const itemsPerPage = 25
 const hasMore = ref(true)
 
 onMounted(async () => {
-  await userStore.searchEmployers({
-    searchParameter: '',
-    page: currentPage.value,
-    size: itemsPerPage,
-    sort: ['lemons,desc']
-  })
+  await loadMore()
   await companiesStore.fetch()
   await userStore.employersStat()
 })
@@ -158,13 +150,11 @@ const getDescription = (u: User) => {
 
 watch(
   [searchQuery, filteredByCompany],
-  _.debounce(() => userStore.searchEmployers({
-      searchParameter: searchQuery.value,
-      clinicIds: filteredByCompany.value || [],
-      page: 0,
-      size: itemsPerPage,
-      sort: ['lemons,desc']
-    }), 300),
+  _.debounce(async () => {
+    currentPage.value = 0
+    hasMore.value = true
+    await loadMore()
+  }, 300),
 )
 
 const selectEmployer = (user: User): void => {
@@ -204,11 +194,23 @@ const paginatedEmployees = computed(() => {
   return filteredEmployees.value.slice(0, end)
 })
 
-const loadMore = () => {
-  if (currentPage.value * itemsPerPage < filteredEmployees.value.length) {
-    currentPage.value++
+const loadMore = async () => {
+  if (userStore.loading || !hasMore.value) return
+
+  try {
+    await userStore.searchEmployers({
+      searchParameter: searchQuery.value,
+      clinicIds: filteredByCompany.value || [],
+      page: currentPage.value,
+      size: itemsPerPage,
+      sort: ['lemons,desc']
+    })
+
+    currentPage.value += 1
+    hasMore.value = currentPage.value < (userStore.employerStatistic?.users || 0) / itemsPerPage
+  } catch (error) {
+    hasMore.value = false
   }
-  hasMore.value = currentPage.value * itemsPerPage < filteredEmployees.value.length
 }
 
 const filteredEmployees = computed(() => {

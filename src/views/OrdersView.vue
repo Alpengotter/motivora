@@ -93,7 +93,6 @@ const toggleHistoryModal = () => {
 };
 
 const showDeclineModal = (order: Order) => {
-  console.log(order);
   isOpenDeclineModal.value = true;
   if (order) {
     selectedOrder.value = order;

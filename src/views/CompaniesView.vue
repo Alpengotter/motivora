@@ -7,7 +7,7 @@
       <div class="statistic-container">
         <StatisticItem
           title="Клиник"
-          :count="companiesStore.statistic?.companies"
+          :count="companiesStore.statistic?.users"
           icon="employer"
         />
         <StatisticItem title="Зубов" :count="companiesStore.statistic?.lemons" icon="lemons" />
@@ -35,6 +35,14 @@
       <span> Список клиник не загружен. </span>
       <span>Обратитесь в поддержку.</span>
     </div>
+
+    <!-- employer info modal -->
+    <ModalView :show="isModalOpen" @close-modal="toggleModal">
+      <template #content>
+        <CompanyModalContent :employerId="selectedCompany!.id" :updateWallet="companiesStore.updateById"
+                              :close="toggleModal" />
+      </template>
+    </ModalView>
   </div>
 </template>
 
@@ -49,6 +57,8 @@ import ListItemView from '@/components/ListItemView.vue'
 
 import { useCompaniesStore } from '@/stores/companyStores'
 import type { Company } from '@/types/company'
+import EmployerModalContent from '@/components/EmployerModalContent.vue'
+import CompanyModalContent from '@/components/companies/CompanyModalContent.vue'
 
 const companiesStore = useCompaniesStore()
 
@@ -59,7 +69,6 @@ const isModalOpen = ref(false)
 const selectedCompany = ref<Company | undefined>(undefined)
 
 onMounted(async () => {
-  console.log(selectedCompany.value)
   await companiesStore.fetch()
   await companiesStore.getStatistic()
 })
@@ -69,6 +78,7 @@ const toggleModal = () => {
 }
 
 const selectCompany = (c: Company): void => {
+  console.log(c)
   selectedCompany.value = c
   toggleModal()
 }

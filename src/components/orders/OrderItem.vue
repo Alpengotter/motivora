@@ -93,7 +93,6 @@ const prepareOrderItem = () => {
 }
 
 const acceptOrder = async () => {
-  console.log('acceptOrder');
   try {
     await ordersStore.changeStatus(props.order.id, 'ACCEPTED');
     await updateEmployerWallet();

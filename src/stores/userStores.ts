@@ -51,7 +51,6 @@ export const useUserStore = defineStore('users', {
           const value = params[key]
 
           if (value === undefined || value === null) continue
-          console.log(key, value)
           if (Array.isArray(value)) {
             value.forEach((v) => search.append(key, String(v)))
           } else {

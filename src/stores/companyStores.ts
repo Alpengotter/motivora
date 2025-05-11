@@ -13,7 +13,7 @@ interface CompaniesState {
 }
 
 interface CompanyStatistic {
-  companies: number
+  users: number
   lemons: number
   diamonds: number
 }
@@ -82,14 +82,13 @@ export const useCompaniesStore = defineStore('companies', {
       }
     },
 
-    async updateById(id: number, wallet: { lemons: number; diamonds: number; comment: string }) {
+    async updateById(id: number, wallet: { currency: number;  comment: string }) {
       this.loading = true
       this.error = null
 
       try {
-        const response = await makeRequest<Company>(`companies/${id}`, 'put', {
-          lemons: wallet.lemons,
-          diamonds: wallet.diamonds,
+        const response = await makeRequest<Company>(`clinics/currency/${id}`, 'put', {
+          currency: wallet.currency,
           comment: wallet.comment,
         })
 

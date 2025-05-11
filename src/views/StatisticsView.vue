@@ -10,7 +10,6 @@ const isOpenFullPage = ref(false);
 const selectedType = ref<string>('');
 
 const openFullpageModal = (type: string) => {
-  console.log(type);
   selectedType.value = type;
   toggleFullPageCard()
 };
