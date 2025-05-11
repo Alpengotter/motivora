@@ -1,10 +1,6 @@
 const translateStatistics = {
-  ORDERS_PROCESSED: 'Заказов обработано',
   LEMONS_ACCRUED: 'Зубов начислено',
   LEMONS_SPEND: 'Зубов потрачено',
-  DIAMONDS_ACCRUED: 'Алмазов начислено',
-  DIAMONDS_SPEND: 'Алмазов потрачено',
-  NEW_EMPLOYER: 'Новых сотрудников',
 }
 
 type TranslationKey = keyof typeof translateStatistics;

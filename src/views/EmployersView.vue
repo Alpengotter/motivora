@@ -13,14 +13,17 @@
       <!-- search field -->
       <div class="filter-container">
         <Search placeholder="Поиск" v-model:model-value="searchQuery" />
-        <MultiSelect v-model="filteredByCompany" :options="companiesStore.data" optionLabel="name" optionValue="id" showClear
-          placeholder="Выберите компанию" class="select-company" />
+        <MultiSelect v-model="filteredByCompany" :options="companiesStore.data" optionLabel="name" optionValue="id"
+          showClear placeholder="Выберите компанию" class="select-company" />
       </div>
 
 
       <div class="actions">
+        <Button appearance="secondary" @click="toggleHistoryModal">
+          <img style="width: 14px; height: 14px; margin-right: 8px" src="@/assets/calendar.png" alt="calendar" />
+          История
+        </Button>
         <Button appearance="secondary" @click="toggleAddNewModal">+</Button>
-
       </div>
     </div>
 
@@ -31,8 +34,7 @@
           :title="`${employee.lastName} ${employee.firstName}`" :subtitle="employee.email"
           :description="getDescription(employee)" :wallet="[{ value: employee.lemons, currency: 'tooth' }]"
           :wallet-action="() => selectEmployer(employee)" v-bind:key="employee.id + 1000" class="accordion-item"
-          show-checkbox
-          :style="{ top: `${index * 15}px` }" />
+          show-checkbox :style="{ top: `${index * 15}px` }" />
       </div>
       <div>
         <Button appearance="secondary" @click="toggleMultipleModal">Начислить выбранным</Button>
@@ -42,8 +44,7 @@
     <div class="employers-list" v-if="paginatedEmployees.length">
       <ListItemView v-for="employee in paginatedEmployees" :id="employee.id"
         :title="`${employee.lastName} ${employee.firstName}`" :subtitle="employee.email"
-        :description="getDescription(employee)" :wallet="[{ value: employee.lemons, currency: 'tooth' }]"
-        show-checkbox
+        :description="getDescription(employee)" :wallet="[{ value: employee.lemons, currency: 'tooth' }]" show-checkbox
         :wallet-action="() => selectEmployer(employee)" v-bind:key="employee.id" />
       <div v-if="hasMore" v-lazy-load="loadMore">
         <div class="loading-spinner">
@@ -81,6 +82,12 @@
         <EmployerMultipleAccrualModal :close="handleCloseMultipleAccrual" />
       </template>
     </ModalView>
+
+    <ModalView :show="isModalHistoryOpen" @close-modal="toggleHistoryModal">
+      <template #content>
+        <HistoryModal />
+      </template>
+    </ModalView>
   </div>
 </template>
 
@@ -101,6 +108,11 @@ import { useSelectedUsersStore } from '@/stores/selectedUsersStore'
 import EmployerMultipleAccrualModal from '@/components/EmployerMultipleAccrualModal.vue'
 import { useCompaniesStore } from '@/stores/companyStores'
 import ListItemView from '@/components/ListItemView.vue'
+import HistoryModal from '@/components/modals/HistoryModal.vue'
+import _ from 'lodash'
+
+//@ts-ignoreEmployerCard.vue
+import SortIcon from '@/assets/icons/sort.svg?component';
 
 const userStore = useUserStore()
 const companiesStore = useCompaniesStore()
@@ -112,17 +124,22 @@ const filteredByCompany = ref(null)
 const isModalOpen = ref(false)
 const isModalAddNewOpen = ref(false)
 const isModalMultipleOpen = ref(false)
+const isModalHistoryOpen = ref(false)
 
 const isSelectMode = ref(false)
 const selectedEmployer = ref<User | undefined>(undefined)
 
-const currentPage = ref(1)
+const currentPage = ref(0)
 const itemsPerPage = 25
 const hasMore = ref(true)
 
 onMounted(async () => {
-  console.log(selectedEmployer.value)
-  await userStore.fetchUsers()
+  await userStore.searchEmployers({
+    searchParameter: '',
+    page: currentPage.value,
+    size: itemsPerPage,
+    sort: ['lemons,desc']
+  })
   await companiesStore.fetch()
   await userStore.employersStat()
 })
@@ -139,15 +156,16 @@ const getDescription = (u: User) => {
   return ''
 }
 
-watch([searchQuery, filteredByCompany], () => {
-  userStore.searchEmployers({
-    searchParameter: searchQuery.value,
-    clinicIds: filteredByCompany.value || [],
-    page: currentPage.value,
-    size: itemsPerPage,
-    sort: ['lemons,desc']
-  })
-})
+watch(
+  [searchQuery, filteredByCompany],
+  _.debounce(() => userStore.searchEmployers({
+      searchParameter: searchQuery.value,
+      clinicIds: filteredByCompany.value || [],
+      page: 0,
+      size: itemsPerPage,
+      sort: ['lemons,desc']
+    }), 300),
+)
 
 const selectEmployer = (user: User): void => {
   selectedEmployer.value = user
@@ -166,6 +184,10 @@ const toggleMultipleModal = () => {
   isModalMultipleOpen.value = !isModalMultipleOpen.value
 }
 
+const toggleHistoryModal = () => {
+  isModalHistoryOpen.value = !isModalHistoryOpen.value
+}
+
 const handleCloseMultipleAccrual = () => {
   isModalMultipleOpen.value = !isModalMultipleOpen.value
   toggleSelectMode()
@@ -177,7 +199,7 @@ const clearSelection = () => {
 }
 
 const paginatedEmployees = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage
+  const start = (currentPage.value) * itemsPerPage
   const end = start + itemsPerPage
   return filteredEmployees.value.slice(0, end)
 })

@@ -6,7 +6,7 @@
       </div>
       <div class="statistic-container">
         <StatisticItem
-          title="Клиники"
+          title="Клиник"
           :count="companiesStore.statistic?.companies"
           icon="employer"
         />

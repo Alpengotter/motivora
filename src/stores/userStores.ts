@@ -39,25 +39,6 @@ export const useUserStore = defineStore('users', {
   },
 
   actions: {
-    // Fetch all users
-    // FIXME: rename to employers
-    async fetchUsers(offset = 0, limit = 25) {
-      this.loading = true
-      this.error = null
-      try {
-        const response = await makeRequest<User[]>(
-          `employers?offset=${offset}&limit=${limit}`,
-          'get',
-        )
-
-        this.users = response
-      } catch (error) {
-        this.error = error instanceof Error ? error.message : 'Failed to fetch users'
-      } finally {
-        this.loading = false
-      }
-    },
-
     async searchEmployers(params: Params) {
       this.loading = true
       this.error = null
@@ -70,7 +51,7 @@ export const useUserStore = defineStore('users', {
           const value = params[key]
 
           if (value === undefined || value === null) continue
-
+          console.log(key, value)
           if (Array.isArray(value)) {
             value.forEach((v) => search.append(key, String(v)))
           } else {
@@ -112,7 +93,7 @@ export const useUserStore = defineStore('users', {
       this.error = null
 
       try {
-        const response = await makeRequest<User>(`employers/${id}`, 'put', {
+        const response = await makeRequest<User>(`employers/currency/${id}`, 'put', {
           lemons: wallet.lemons,
           diamonds: wallet.diamonds,
           comment: wallet.comment,
@@ -126,7 +107,13 @@ export const useUserStore = defineStore('users', {
           }
         }
 
-        await this.fetchUsers()
+        await this.searchEmployers({
+          searchParameter: '',
+          clinicIds: [],
+          page: 0,
+          size: 25,
+          sort: ['lemons,desc']
+        })
         await this.employersStat()
 
         return response
@@ -161,7 +148,13 @@ export const useUserStore = defineStore('users', {
           isActive: false,
         })
 
-        await this.fetchUsers()
+        await this.searchEmployers({
+          searchParameter: '',
+          clinicIds: [],
+          page: 0,
+          size: 25,
+          sort: ['lemons,desc']
+        })
         await this.employersStat()
 
         return response
@@ -179,7 +172,13 @@ export const useUserStore = defineStore('users', {
       try {
         const response = await makeRequest<User>(`employers`, 'post', user)
 
-        await this.fetchUsers()
+        await this.searchEmployers({
+          searchParameter: '',
+          clinicIds: [],
+          page: 0,
+          size: 25,
+          sort: ['lemons,desc']
+        })
         await this.employersStat()
 
         return response
@@ -212,7 +211,13 @@ export const useUserStore = defineStore('users', {
           comment,
         })
 
-        await this.fetchUsers()
+        await this.searchEmployers({
+          searchParameter: '',
+          clinicIds: [],
+          page: 0,
+          size: 25,
+          sort: ['lemons,desc']
+        })
         await this.employersStat()
 
         return response

@@ -12,7 +12,7 @@
       <p class="error-message">{{ errors.email }}</p>
       <input v-model.trim="department" type="text" class="input" placeholder="Должность">
       <p class="error-message">{{ errors.department }}</p>
-      <Select v-model="companyId" :options="companyStore.data" optionLabel="title" placeholder="Выберите компанию" class="input"/>
+      <Select v-model="companies" :options="companyStore.data" optionLabel="name" optionValue="id" placeholder="Выберите компанию" class="input"/>
       <p class="error-message">{{ errors.department }}</p>
     </main>
     <footer>
@@ -37,7 +37,7 @@ const surname = ref('');
 const firstName = ref('');
 const email = ref('');
 const department = ref('');
-const companyId = ref<number | null>(null);
+const companies = ref<string[]>([]);
 
 const errors = ref({
   surname: '',
@@ -120,7 +120,7 @@ const handleSubmit = async () => {
     firstName: firstName.value,
     lastName: surname.value,
     email: email.value,
-    companyId: 1,
+    clinics: companies.value,
     lemons: 0,
     diamonds: 0,
     userRole: "USER",

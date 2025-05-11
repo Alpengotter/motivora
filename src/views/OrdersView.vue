@@ -137,7 +137,13 @@ const sendNotification = (
 
 onMounted(async () => {
   await ordersStore.fetchOrders();
-  await userStore.fetchUsers();
+  await userStore.searchEmployers({
+          searchParameter: '',
+          clinicIds: [],
+          page: 0,
+          size: 25,
+          sort: ['lemons,desc']
+        })
 });
 </script>
 
@@ -311,7 +317,7 @@ header {
 
 /* On mouse-over, add a grey background color */
 .checkbox-container:hover input~.checkmark {
-  background-color: #ffe000;
+  background-color: #19A7E0;
   transition: .2s;
 }
 

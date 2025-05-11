@@ -6,7 +6,7 @@
     </div>
     <p class="history-comment secondary-text">{{ historyItem.comment }}</p>
     <p class="history-sum primary-text" v-if="props.historyItem.currency === 'lemons'">
-      {{ historyItem.value }} <img src="@/assets/lemon.png" alt="lemon" width="18" height="18"/>
+      {{ historyItem.value }} <img src="@/assets/tooth.png" alt="lemon" width="18" height="18"/>
     </p>
     <p class="history-sum primary-text" v-if="props.historyItem.currency === 'diamonds'">
       {{ historyItem.value }} <img src="@/assets/gem.png" alt="lemon" width="18" height="18"/>
