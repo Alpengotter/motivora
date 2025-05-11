@@ -153,6 +153,7 @@ watch(
   _.debounce(async () => {
     currentPage.value = 0
     hasMore.value = true
+    currentPage.value = 0
     await loadMore()
   }, 300),
 )
@@ -205,7 +206,7 @@ const loadMore = async () => {
       size: itemsPerPage,
       sort: ['lemons,desc']
     }, )
-    
+
     currentPage.value += 1
     hasMore.value = currentPage.value < Math.floor((userStore.employerStatistic?.users || 0) / itemsPerPage)
   } catch (error) {

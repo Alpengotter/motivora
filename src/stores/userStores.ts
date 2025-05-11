@@ -64,7 +64,7 @@ export const useUserStore = defineStore('users', {
           'get',
         )
 
-        this.users = [...this.users, ...response]
+        this.users = response
       } catch (error) {
         this.error = error instanceof Error ? error.message : 'Failed to search users'
       } finally {
