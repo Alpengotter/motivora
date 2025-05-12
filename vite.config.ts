@@ -16,16 +16,16 @@ export default defineConfig(({ command, mode }) => {
 
   return {
     server: {
-      host: 'localhost.bankoflemons.ru',
+      host: 'localhost.motivora.ru',
       port: 5173,
       ...(isDevelopment && {
         proxy: {
           '/api/v1': {
-            target: 'https://uat.bankoflemons.ru',
+            target: 'https://motivora.ru',
             changeOrigin: true,
             secure: false,
             headers: {
-              Origin: 'https://uat.bankoflemons.ru',
+              Origin: 'https://motivora.ru',
             },
             credentials: 'include',
           },

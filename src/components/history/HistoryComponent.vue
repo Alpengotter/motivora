@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="filter-container" v-if="!employer?.id">
+    <div class="filter-container" v-if="!employer?.id && !company?.id">
       <Search placeholder="Поиск" v-model:model-value="searchQuery" @update:modelValue="onSearchQueryChange"/>
       <div class="calendar-button" @click="toggleShowCalendar">
         <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -43,6 +43,7 @@ import Search from '@/components/Search.vue';
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
 import { debounce } from '@/utils/debounce'
+import type { Company } from '@/types/company'
 
 const searchQuery = ref('');
 
@@ -64,6 +65,9 @@ async function getHistory() {
   try {
     if (props.employer?.id) {
       await historyStore.getHistoryByEmployer(props.employer.id);
+    }
+    else if(props.company?.id) {
+      await historyStore.getHistoryByCompany(props.company.id);
     } else {
       const dateFrom = format(date.value[0]);
       const dateTo = format(date.value[1]);
@@ -123,6 +127,7 @@ function toggleShowCalendar() {
 
 const props = defineProps<{
   employer?: User;
+  company?: Company;
 }>()
 </script>
 <style scoped>

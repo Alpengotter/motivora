@@ -31,7 +31,7 @@ const chartData = {
       data: props.data || [0,0,0,0,0,0],
       backgroundColor: () => {
         return chartData.labels.map((_, index) =>
-          index === currentMounth ? '#FFE000' : '#5A5A5A'
+          index === currentMounth ? '#19A7E0' : '#5A5A5A'
         )
       },
       borderRadius: 99,

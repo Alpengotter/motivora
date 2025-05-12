@@ -35,7 +35,7 @@ onMounted(() => {
 
     <header class="header">
       <RouterLink to="/" class="header__logo-link">
-        <img alt="Vue logo" class="header__logo" src="@/assets/logo.png" width="153" height="50" />
+        <img alt="Vue logo" class="header__logo" src="@/assets/logo.png" width="183" height="50" />
       </RouterLink>
 
       <div class="header__menu">

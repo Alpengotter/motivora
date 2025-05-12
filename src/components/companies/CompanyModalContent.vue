@@ -1,17 +1,27 @@
 <template>
-  <div v-if="userStore.loading" class="preloader">
+  <div v-if="companyStore.loading" class="preloader">
     <Preloader :width="50" />
   </div>
-  <div class="wrapper" v-if="employer && !userStore.loading">
+  <div class="wrapper" v-if="employer && !companyStore.loading">
     <header>
-      <h2 class="fullname">{{ employer?.lastName }} {{ employer?.firstName }}</h2>
-<!--      <span class="email">{{ employer?.email }}</span>-->
+      <h2 class="fullname">{{ employer.name }}</h2>
+      <!--      <span class="email">{{ employer?.email }}</span>-->
     </header>
     <main>
       <div class="wallet">
-        <p><img src="@/assets/tooth.png" alt="lemon" width="30" height="30" style="margin-right: 4px"/><span>{{ employer?.lemons }}</span>
-          <span v-if="activeCurrencyIndex === 0 && inputValue" class="change-value"
-            :class="{ 'add': activeOperationIndex === 0, 'remove': activeOperationIndex === 1 }">
+        <p>
+          <img
+            src="@/assets/tooth.png"
+            alt="lemon"
+            width="30"
+            height="30"
+            style="margin-right: 4px"
+          /><span>{{ employer?.currency }}</span>
+          <span
+            v-if="activeCurrencyIndex === 0 && inputValue"
+            class="change-value"
+            :class="{ add: activeOperationIndex === 0, remove: activeOperationIndex === 1 }"
+          >
             <span v-if="activeOperationIndex === 0">+</span>
             <span v-else>-</span>{{ inputValue }}
           </span>
@@ -21,7 +31,7 @@
       <div class="nominations">
         <VaSelect
           v-model="nominations"
-          :options="NOMINATIONS_PERSONAL"
+          :options="NOMINATIONS_TEAM"
           searchable
           clearable
           highlight-matched-text
@@ -40,179 +50,173 @@
       <div class="actions-wrapper">
         <div class="actions">
           <div class="switch">
-            <div v-for="(currency, index) in currencies" :key="index"
-              :class="{ 'switch-item': true, active: activeCurrencyIndex === index }" @click="setActiveCurrency(index)">
+            <div
+              v-for="(currency, index) in currencies"
+              :key="index"
+              :class="{ 'switch-item': true, active: activeCurrencyIndex === index }"
+              @click="setActiveCurrency(index)"
+            >
               <span>{{ currency }}</span>
             </div>
           </div>
           <div class="switch">
-            <div v-for="(operation, index) in operations" :key="index"
+            <div
+              v-for="(operation, index) in operations"
+              :key="index"
               :class="{ 'switch-item': true, active: activeOperationIndex === index }"
-              @click="setActiveOperation(index)">
+              @click="setActiveOperation(index)"
+            >
               <span>{{ operation }}</span>
             </div>
           </div>
-          <input class="input balance" type="text" placeholder="0" v-model="inputValue">
-          <input class="input" type="text" placeholder="Комментарий" v-model="commentValue">
+          <input class="input balance" type="text" placeholder="0" v-model="inputValue" />
+          <input class="input" type="text" placeholder="Комментарий" v-model="commentValue" />
 
-          <Button appearance="primary" class="submit" @click="handleSubmit(employer)" :disabled="!inputValue"
-                  :class="{ 'disabled': !inputValue }">
+          <Button
+            appearance="primary"
+            class="submit"
+            @click="handleSubmit(employer)"
+            :disabled="!inputValue"
+            :class="{ disabled: !inputValue }"
+          >
             Начислить
           </Button>
         </div>
 
-        <div class="comment-container">
-
-        </div>
-
-
+        <div class="comment-container"></div>
       </div>
 
       <div class="history">
         <p class="history-title">Последние операции</p>
         <div class="history-list">
-          <HistoryComponent :employer="employer" />
+          <HistoryComponent :company="employer" />
         </div>
       </div>
     </main>
     <footer>
       <Button appearance="attention" class="deactivate">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 16 16"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
           <path
             d="M8 1C4.1 1 1 4.1 1 8C1 11.9 4.1 15 8 15C11.9 15 15 11.9 15 8C15 4.1 11.9 1 8 1ZM8 14C4.7 14 2 11.3 2 8C2 4.7 4.7 2 8 2C11.3 2 14 4.7 14 8C14 11.3 11.3 14 8 14Z"
-            fill="white" />
+            fill="white"
+          />
           <path
             d="M10.7 11.5L8 8.8L5.3 11.5L4.5 10.7L7.2 8L4.5 5.3L5.3 4.5L8 7.2L10.7 4.5L11.5 5.3L8.8 8L11.5 10.7L10.7 11.5Z"
-            fill="white" />
+            fill="white"
+          />
         </svg>
 
-        <span class="button-title" @click="deactivate">Деактивировать</span></Button>
+        <span class="button-title" >Деактивировать</span></Button
+      >
     </footer>
   </div>
 </template>
 
 <script setup lang="ts">
-import Button from '@/components/Button.vue';
-import { useUserStore } from '@/stores/userStores';
-import type { User } from '@/types/user';
+import Button from '@/components/Button.vue'
 import { onMounted, ref, watch } from 'vue'
-import Preloader from './Preloader.vue';
-import HistoryComponent from './history/HistoryComponent.vue';
+import Preloader from '@/components/Preloader.vue'
+import HistoryComponent from '@/components/history/HistoryComponent.vue'
 import { VaSelect } from 'vuestic-ui'
-import { NOMINATIONS_PERSONAL } from '@/constants/nominations'
+import { NOMINATIONS_TEAM } from '@/constants/nominations'
 import type { Nomination } from '@/types/nomination'
+import type { Company } from '@/types/company'
+import { useCompaniesStore } from '@/stores/companyStores'
 
-const userStore = useUserStore();
+const companyStore = useCompaniesStore()
 
-const operations = ['+', '-'];
-const currencies = ['🦷'];
+const operations = ['+', '-']
+const currencies = ['🦷']
 
-const activeOperationIndex = ref(0);
-const activeCurrencyIndex = ref(0);
-const inputValue = ref<number>(0);
-const employer = ref<User | undefined>(undefined);
+const activeOperationIndex = ref(0)
+const activeCurrencyIndex = ref(0)
+const inputValue = ref<number>(0)
+const employer = ref<Company | undefined>(undefined)
 
 const commentValue = ref<string>('')
 const nominations = ref<Nomination | null>(null)
 
 watch(nominations, () => {
-  inputValue.value = nominations.value?.value || 0;
+  inputValue.value = nominations.value?.value || 0
 })
 
 onMounted(async () => {
   try {
-    const response = await userStore.getEmployerById(props.employerId);
-    employer.value = response;
+    employer.value = await companyStore.getById(props.employerId)
   } catch (error) {
-    console.error('Error fetching employer:', error);
+    console.error('Error fetching company:', error)
   }
-});
+})
 
 const refresh = async () => {
   try {
-    const response = await userStore.getEmployerById(props.employerId);
-    employer.value = response;
+    employer.value = await companyStore.getById(props.employerId)
   } catch (error) {
-    console.error('Error fetching employer:', error);
+    console.error('Error fetching company:', error)
   }
 }
 
-const handleSubmit = async (employer: User | undefined) => {
-  if (!employer) return;
-  let lemons = employer.lemons || 0;
-  let diamonds = employer.diamonds || 0;
+const handleSubmit = async (employer: Company | undefined) => {
+  if (!employer) return
+  let lemons = employer.currency || 0
+  // let diamonds = employer.diamonds || 0
+
 
   if (inputValue.value) {
-    if (activeCurrencyIndex.value === 0) {
-      if (activeOperationIndex.value === 0) {
-        lemons += inputValue.value;
-      } else {
-        lemons -= inputValue.value;
-      }
+    if (activeOperationIndex.value === 0) {
+      lemons += inputValue.value
     } else {
-      if (activeOperationIndex.value === 0) {
-        diamonds += inputValue.value;
-      } else {
-        diamonds -= inputValue.value;
-      }
+      lemons -= inputValue.value
     }
   }
 
   if (lemons < 0) {
-    lemons = 0;
+    lemons = 0
   }
 
-  if (diamonds < 0) {
-    diamonds = 0;
-  }
+  // if (diamonds < 0) {
+  //   diamonds = 0
+  // }
 
   try {
-    await props.updateWallet(employer.id, { lemons, diamonds, comment: `${nominations.value?.text || ''} ${commentValue.value || ''}` });
-    await refresh();
+    await props.updateWallet(employer.id, {
+      currency: lemons,
+      comment: `${nominations.value?.text || ''} ${commentValue.value || ''}`,
+    })
+    await refresh()
 
-    inputValue.value = 0;
+    inputValue.value = 0
     commentValue.value = ''
   } catch (error) {
-    console.error('Error updating wallet:', error);
+    console.error('Error updating wallet:', error)
   }
-};
-
-const sendNotification = (email: string, count: number, currency: string, comment: string) => {
-  const langCurrency = currency === 'lemons' ? 'лимонов' : 'алмазов'
-  const subject = 'Магазин мерча Зарплаты.ру';
-  const body = `Привет!%0D%0AМы начислили тебе ${count} ${langCurrency} за ачивку "${comment}".%0D%0AПереходи в наш магазин мерча store.zarplata.ru и оформляй заказ. Вперед за покупками!`
-  const mailto = `
-            mailto:${email}?subject=${subject}&body=${body}
-        `;
-  window.location.href = mailto;
 }
 
 const setActiveOperation = (index: number) => {
-  activeOperationIndex.value = activeOperationIndex.value === index ? 0 : index;
-};
+  activeOperationIndex.value = activeOperationIndex.value === index ? 0 : index
+}
 
 const setActiveCurrency = (index: number) => {
-  activeCurrencyIndex.value = activeCurrencyIndex.value === index ? 0 : index;
-};
-
-const deactivate = async () => {
-  try {
-    await userStore.deactivateEmployerById(props.employerId)
-    props.close();
-  } catch (error) {
-    console.error('Error deactivating employer:', error);
-  }
+  activeCurrencyIndex.value = activeCurrencyIndex.value === index ? 0 : index
 }
 
 
 const props = defineProps<{
-  employerId: number,
-  close: () => void;
-  updateWallet: (id: number, wallet: {
-    lemons: number;
-    diamonds: number;
-    comment: string;
-  }) => Promise<User | undefined>;
+  employerId: number
+  close: () => void
+  updateWallet: (
+    id: number,
+    wallet: {
+      currency: number
+      comment: string
+    },
+  ) => Promise<Company | undefined>
 }>()
 </script>
 
@@ -366,7 +370,7 @@ footer {
 .input {
   border-radius: 99px;
   border: none;
-  background-color: rgba(0, 0, 0, .1);
+  background-color: rgba(0, 0, 0, 0.1);
   padding: 8px 16px;
   font-size: 14px;
 }
@@ -391,7 +395,7 @@ footer {
 }
 
 .remove {
-  color: #FF746C;
+  color: #ff746c;
 }
 
 .button-title {
@@ -454,24 +458,24 @@ footer {
   width: 25px;
   background-color: #fff;
   border-radius: 99px;
-  transition: .2s;
+  transition: 0.2s;
 }
 
 /* On mouse-over, add a grey background color */
-.checkbox-container:hover input~.checkmark {
+.checkbox-container:hover input ~ .checkmark {
   background-color: #d4d4d4;
-  transition: .2s;
+  transition: 0.2s;
 }
 
 /* Create the checkmark/indicator (hidden when not checked) */
 .checkbox-checkmark:after {
-  content: "";
+  content: '';
   position: absolute;
   display: none;
 }
 
 /* Show the checkmark when checked */
-.checkbox-container input:checked~.checkbox-checkmark:after {
+.checkbox-container input:checked ~ .checkbox-checkmark:after {
   display: block;
 }
 

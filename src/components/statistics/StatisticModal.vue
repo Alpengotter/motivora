@@ -216,12 +216,12 @@ const emit = defineEmits<{
 }
 
 .active {
-  background-color: #ffe000;
+  background-color: #19A7E0;
   cursor: auto;
 }
 
 .active:hover {
-  background-color: #ffe000;
+  background-color: #19A7E0;
 }
 
 .paginator-previous,

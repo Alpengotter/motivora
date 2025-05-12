@@ -1,5 +1,23 @@
 <template>
   <div class="actions-wrapper">
+    <div class="nominations">
+      <VaSelect
+        v-model="nominations"
+        :options="NOMINATIONS_PERSONAL"
+        searchable
+        clearable
+        highlight-matched-text
+        placeholder="Выберите номинацию"
+        style="width: 100%; background-color: rgba(0, 0, 0, 0.1); height: 40px"
+      >
+        <template #option="{ option, selectOption }">
+          <div class="nominations-item" @click.prevent="selectOption(option)">
+            <!-- @vue-ignore -->
+            {{ option?.text }}
+          </div>
+        </template>
+      </VaSelect>
+    </div>
     <div class="actions">
       <div class="switch">
         <div v-for="(currency, index) in currencies" :key="index"
@@ -14,21 +32,12 @@
         </div>
       </div>
       <input class="input" type="number" placeholder="0" v-model="inputValue">
-    </div>
-    <div class="comment-container">
       <input class="input" type="text" placeholder="Комментарий" v-model="commentValue">
-      <div class="checkbox-wrapper">
-        <label class="checkbox-container">
-          <input type="checkbox" v-model="isNotify" />
-          <span class="checkbox-checkmark"></span>
-        </label>
-        <p>Уведомить о начислении</p>
-      </div>
     </div>
     <div>
-      <Button appearance="primary" class="submit" @click="handleSubmit" :disabled="!inputValue || !commentValue"
-        :class="{ 'disabled': !inputValue || !commentValue }">
-        OK
+      <Button appearance="primary" class="submit" @click="handleSubmit" :disabled="!inputValue"
+        :class="{ 'disabled': !inputValue }">
+        Начислить
       </Button>
     </div>
 
@@ -36,8 +45,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import Button from './Button.vue';
+import { ref, watch } from 'vue'
+import Button from '@/components/Button.vue';
+import { NOMINATIONS_PERSONAL } from '@/constants/nominations'
+import { VaSelect } from 'vuestic-ui'
+import type { Nomination } from '@/types/nomination'
 
 const props = defineProps<{
   currencies: string[];
@@ -51,6 +63,11 @@ const activeCurrencyIndex = ref(0);
 const inputValue = ref<number | null>(null);
 const commentValue = ref<string>('');
 const isNotify = ref<boolean>(false);
+const nominations = ref<Nomination | null>(null)
+
+watch(nominations, () => {
+  inputValue.value = nominations.value?.value || 0;
+})
 
 const setActiveCurrency = (index: number) => {
   activeCurrencyIndex.value = index;
@@ -65,7 +82,7 @@ const handleSubmit = () => {
     currency: props.currencies[activeCurrencyIndex.value],
     operation: props.operations[activeOperationIndex.value],
     value: inputValue.value,
-    comment: commentValue.value,
+    comment: `${nominations.value?.text || ''} ${commentValue.value || ''}`,
     isNotify: isNotify.value,
   });
   inputValue.value = null;
@@ -73,6 +90,24 @@ const handleSubmit = () => {
 </script>
 
 <style scoped>
+.valueInput {
+  width: 100px;
+}
+.nominations {
+  display: flex;
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.nominations-item {
+  white-space: nowrap;
+  padding: 8px;
+}
+
+.nominations-content {
+  width: 100%;
+  white-space: nowrap;
+}
 .actions-wrapper {
   display: flex;
   justify-content: center;
@@ -124,10 +159,9 @@ const handleSubmit = () => {
 }
 
 .submit {
-  width: 40px;
   height: 40px;
   border-radius: 99px;
-  padding: 0;
+  padding: 0 16px;
   font-size: 14px;
 }
 

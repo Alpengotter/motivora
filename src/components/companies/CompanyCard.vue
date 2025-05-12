@@ -1,74 +1,32 @@
 <template>
   <div class="employer glass">
     <div class="info-container">
-      <label class="container" v-if="selectMode">
-        <input type="checkbox" v-model="isItemSelected" @change="toggleSelection" />
-        <span class="checkmark"></span>
-      </label>
       <div class="info">
-        <p class="primary-text">{{ user.lastName }} {{ user.firstName }}</p>
-        <p class="secondary-text">{{ user.email }}</p>
+        <p class="primary-text">{{ company.name }}</p>
       </div>
     </div>
 
     <div class="department">
-      <p class="secondary-text">{{ user.jobTitle }}</p>
     </div>
 
-    <div class="wallet" @click="showUserInfo(user)">
+    <div class="wallet" @click="showUserInfo(company)">
       <div class="wallet-lemons">
-        <p class="wallet-text">{{ user.lemons }} <img src="@/assets/lemon.png" alt="lemon" width="18" height="18" style="margin-left: 4px"/></p>
-
-      </div>
-
-      <div class="divider" />
-
-      <div class="wallet-diamonds">
-        <p class="wallet-text">{{ user.diamonds }} <img src="@/assets/gem.png" alt="gem" width="18" height="18" style="margin-left: 4px"/></p>
+        <p class="wallet-text">{{ company.currency }} <img src="@/assets/tooth.png" alt="lemon" width="18" height="18" style="margin-left: 4px"/></p>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useSelectedUsersStore } from '@/stores/selectedUsersStore';
-import type { User } from '@/types/user';
-import { computed } from 'vue';
+import type { Company } from '@/types/company'
 
 const props = defineProps<{
-  user: User;
-  selectMode: boolean;
-  showUserInfo: (user: User) => void;
+  company: Company;
+  showUserInfo: (c: Company) => void;
 }>();
-
-const selectedEmployersStore = useSelectedUsersStore();
-
-const isItemSelected = computed(() => {
-  return selectedEmployersStore.selectedItems.some(item => item.id === props.user.id)
-})
-
-const toggleSelection = (event: Event) => {
-  const target = event.target as HTMLInputElement;
-  if (target.checked) {
-    selectedEmployersStore.selectedItems.push(props.user);
-  } else {
-    selectedEmployersStore.selectedItems = selectedEmployersStore.selectedItems.filter((user) => user.id !== props.user.id);
-  }
-};
 </script>
 
 <style scoped>
-.title {
-  font-style: normal;
-  font-weight: 700;
-  font-size: 24px;
-  line-height: 29px;
-
-  margin-bottom: 27px;
-
-  color: var(--color-text);
-}
-
 .employer {
   display: flex;
   justify-content: space-between;

@@ -8,14 +8,8 @@
 
     <div class="wallet">
       <div class="wallet-lemons">
-        <p class="wallet-text">{{ employee.lemons }} <img src="@/assets/lemon.png" alt="lemon" width="18" height="18" style="margin-left: 4px"/></p>
+        <p class="wallet-text">{{ employee.lemons }} <img src="@/assets/tooth.png" alt="lemon" width="18" height="18" style="margin-left: 4px"/></p>
 
-      </div>
-
-      <div class="divider" />
-
-      <div class="wallet-diamonds">
-        <p class="wallet-text">{{ employee.diamonds }} <img src="@/assets/gem.png" alt="gem" width="18" height="18" style="margin-left: 4px"/></p>
       </div>
     </div>
   </div>

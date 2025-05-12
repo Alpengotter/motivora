@@ -9,12 +9,12 @@
           <img src="@/assets/gem.png" alt="gem" width="18" height="18"/>
         </div>
         <div v-if="icon === 'lemons'">
-          <img src="@/assets/lemon.png" alt="lemon" width="18" height="18"/>
+          <img src="@/assets/tooth.png" alt="lemon" width="18" height="18"/>
         </div>
       </div>
       <div>
-        <Preloader :width="20" v-if="!count" />
-        <p v-if="count" class="statistic-count">{{ count }}</p>
+        <Preloader :width="20" v-if="count === null" />
+        <p v-if="count !== null" class="statistic-count">{{ count || 0 }}</p>
       </div>
     </div>
     <p class="statistic-title">{{ title }}</p>

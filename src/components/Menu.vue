@@ -1,8 +1,9 @@
 <template>
   <div class="menu glass" v-if="isAuthenticated">
     <nav>
-      <RouterLink to="/" class="nav-item" active-class="active">Заказы</RouterLink>
-      <RouterLink to="/employers" class="nav-item" active-class="active">Сотрудники</RouterLink>
+<!--      <RouterLink to="/" class="nav-item" active-class="active">Заказы</RouterLink>-->
+      <RouterLink to="/" class="nav-item" active-class="active">Сотрудники</RouterLink>
+      <RouterLink to="/companies" class="nav-item" active-class="active">Клиники</RouterLink>
       <RouterLink to="/statistics" class="nav-item" active-class="active">Статистика</RouterLink>
       <RouterLink to="/reports" class="nav-item" active-class="active">Отчеты</RouterLink>
     </nav>
@@ -40,5 +41,6 @@ nav {
 
 .active {
   background-color: var(--vt-c-primary);
+  color: var(--vt-c-white);
 }
 </style>

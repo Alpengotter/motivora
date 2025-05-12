@@ -2,6 +2,7 @@
 import { defineStore } from 'pinia'
 import { type User } from '@/types/user'
 import { makeRequest } from '@/utils/makeRequest'
+import type { Params } from '@/types/params'
 
 interface UserState {
   users: User[]
@@ -38,31 +39,28 @@ export const useUserStore = defineStore('users', {
   },
 
   actions: {
-    // Fetch all users
-    // FIXME: rename to employers
-    async fetchUsers(offset = 0, limit = 200) {
+    async searchEmployers(params: Params) {
       this.loading = true
       this.error = null
-      try {
-        const response = await makeRequest<User[]>(
-          `employers?offset=${offset}&limit=${limit}`,
-          'get',
-        )
 
-        this.users = response
-      } catch (error) {
-        this.error = error instanceof Error ? error.message : 'Failed to fetch users'
-      } finally {
-        this.loading = false
+      const search = new URLSearchParams()
+
+      for (const key in params) {
+        if (params.hasOwnProperty(key)) {
+          // @ts-ignore
+          const value = params[key]
+
+          if (value === undefined || value === null) continue
+          if (Array.isArray(value)) {
+            value.forEach((v) => search.append(key, String(v)))
+          } else {
+            search.append(key, String(value))
+          }
+        }
       }
-    },
-
-    async searchEmployers(searchParameter: string) {
-      this.loading = true
-      this.error = null
       try {
         const response = await makeRequest<User[]>(
-          `employers/find-by-param?searchParameter=${searchParameter}`,
+          `employers/find-by-param?${search}`,
           'get',
         )
 
@@ -108,7 +106,13 @@ export const useUserStore = defineStore('users', {
           }
         }
 
-        await this.fetchUsers()
+        await this.searchEmployers({
+          searchParameter: '',
+          clinicIds: [],
+          page: 0,
+          size: 25,
+          sort: ['lemons,desc']
+        })
         await this.employersStat()
 
         return response
@@ -143,7 +147,13 @@ export const useUserStore = defineStore('users', {
           isActive: false,
         })
 
-        await this.fetchUsers()
+        await this.searchEmployers({
+          searchParameter: '',
+          clinicIds: [],
+          page: 0,
+          size: 25,
+          sort: ['lemons,desc']
+        })
         await this.employersStat()
 
         return response
@@ -161,7 +171,13 @@ export const useUserStore = defineStore('users', {
       try {
         const response = await makeRequest<User>(`employers`, 'post', user)
 
-        await this.fetchUsers()
+        await this.searchEmployers({
+          searchParameter: '',
+          clinicIds: [],
+          page: 0,
+          size: 25,
+          sort: ['lemons,desc']
+        })
         await this.employersStat()
 
         return response
@@ -194,7 +210,13 @@ export const useUserStore = defineStore('users', {
           comment,
         })
 
-        await this.fetchUsers()
+        await this.searchEmployers({
+          searchParameter: '',
+          clinicIds: [],
+          page: 0,
+          size: 25,
+          sort: ['lemons,desc']
+        })
         await this.employersStat()
 
         return response

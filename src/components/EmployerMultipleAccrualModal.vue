@@ -22,7 +22,7 @@ import EmployerSimpleItem from './EmployerSimpleItem.vue'
 import WalletActions from './WalletActions.vue'
 import { useUserStore } from '@/stores/userStores'
 
-const currencies = ['🍋', '💎']
+const currencies = ['🦷']
 const operations = ['+', '-']
 
 const selectedEmployersStore = useSelectedUsersStore()
@@ -41,7 +41,7 @@ const handleSubmit = async ({
   comment: string
   isNotify: boolean
 }) => {
-  currency = currency === '🍋' ? 'lemons' : 'diamonds'
+  currency = currency === '🦷' ? 'lemons' : 'diamonds'
   const userIds = selectedEmployersStore.selectedItems.map((item: User) => item.id)
   try {
     await userStore.multipleAccrual({ userIds, currency, count: value, comment })

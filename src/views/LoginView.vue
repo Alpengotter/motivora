@@ -9,9 +9,9 @@
           <input class="input" type="password" v-model="password" required placeholder="пароль" />
           <span class="input-error">{{ authStore.errorMessage }}</span>
         </div>
-        <button class="submit" :class="{ disabled: authStore.isLoading }" type="submit">
+        <Button appearance="primary" type="submit">
           Войти
-        </button>
+        </Button>
       </form>
 
     </div>
@@ -22,6 +22,7 @@
 import { ref } from 'vue'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { useRouter } from 'vue-router'
+import Button from '@/components/Button.vue'
 
 const authStore = useAuthStore()
 const router = useRouter()
@@ -32,6 +33,7 @@ const password = ref('')
 const handleLogin = async () => {
   try {
     await authStore.login(username.value, password.value)
+    // после успешной авторизации редиректим на главную страницу
     await router.push('/')
   } catch (error) {
     console.log(error)
@@ -87,20 +89,5 @@ const handleLogin = async () => {
 .input-error {
   color: var(--vt-c-danger);
   font-size: 12px;
-}
-
-.submit {
-  background-color: var(--vt-c-primary);
-  color: var(--color-text);
-  border: none;
-  font-size: 14px;
-  font-weight: 600;
-  padding: 8px 0;
-  border-radius: 16px;
-}
-
-.disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
 }
 </style>

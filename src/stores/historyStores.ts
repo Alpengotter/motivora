@@ -66,5 +66,25 @@ export const useHistoryStores = defineStore('history', {
         this.loading = false
       }
     },
+
+    async getHistoryByCompany(id: number) {
+      this.loading = true
+      this.error = null
+      try {
+        const response = await makeRequest<HistoryItem[]>(`history/find-by-clinics-id?id=${id}`, 'get')
+
+        this.history = response
+          .sort((a, b) => {
+            if (a.date < b.date) return 1
+            if (a.date > b.date) return -1
+            return 0
+          })
+          .slice(0, 5)
+      } catch (error) {
+        this.error = error instanceof Error ? error.message : 'Failed to fetch history by clinics'
+      } finally {
+        this.loading = false
+      }
+    },
   },
 })

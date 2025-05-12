@@ -9,6 +9,13 @@ import lazyLoad from './directives/lazy-load'
 import type { Router } from 'vue-router';
 import { useAuthStore } from '@/stores/useAuthStore'
 
+import { createVuestic } from "vuestic-ui";
+import "vuestic-ui/css";
+
+import PrimeVue from 'primevue/config';
+import Aura from '@primeuix/themes/aura';
+import { definePreset } from '@primeuix/themes'
+
 declare module 'pinia' {
   export interface PiniaCustomProperties {
     router: Router;
@@ -23,6 +30,15 @@ pinia.use(({store}) => {
 
 app.use(pinia)
 app.use(router)
+app.use(createVuestic())
+app.use(PrimeVue, {
+  theme: {
+    preset: Aura,
+    options: {
+
+    }
+  }
+});
 
 app.mount('#app')
 
