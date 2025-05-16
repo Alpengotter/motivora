@@ -61,7 +61,8 @@ onMounted(() => {
 
     <footer>
       <div class="footer-container">
-
+        <img alt="Vue logo" class="header__logo" src="@/assets/logo-brand.png" width="183" height="50" />
+        <a href="mailto:hello@alpengotter.ru" class="primary-text">hello@alpengotter.ru</a>
       </div>
     </footer>
   </div>
@@ -91,7 +92,7 @@ footer {
   width: 100%;
   display: flex;
   flex-direction: row;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   padding: 16px;
 }
