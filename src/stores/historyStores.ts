@@ -86,5 +86,17 @@ export const useHistoryStores = defineStore('history', {
         this.loading = false
       }
     },
+
+    async deleteHistoryById(id: number) {
+      this.loading = true
+      this.error = null
+      try {
+        await makeRequest<HistoryItem[]>(`history/${id}`, 'delete')
+      } catch (error) {
+        this.error = error instanceof Error ? error.message : 'Failed to delete history '
+      } finally {
+        this.loading = false
+      }
+    }
   },
 })

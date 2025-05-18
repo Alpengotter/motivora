@@ -19,7 +19,7 @@
       <div class="history-list">
 
         <HistoryItem v-for="historyItem in history" :key="historyItem.id" :historyItem="historyItem"
-          :employer="employer" />
+          :employer="employer" :deleteHistoryById="deleteHistoryById"/>
       </div>
     </div>
     <div v-else-if="historyStore.loading">
@@ -83,6 +83,11 @@ async function getHistory() {
     transformedHistory.value = transformHistory();
     currentDate.value = format(new Date());
   }
+}
+
+const deleteHistoryById = async (id: number) => {
+  await historyStore.deleteHistoryById(id);
+  await getHistory();
 }
 
 async function onDateChange(newDate: Date[]) {

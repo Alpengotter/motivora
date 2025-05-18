@@ -11,6 +11,9 @@
     <p class="history-sum primary-text" v-if="historyItem.currency === 'diamonds'">
       {{ value }} <img src="@/assets/gem.png" alt="lemon" width="18" height="18"/>
     </p>
+    <Button appearance="secondary" class="history-sum primary-text" @click="deleteHistoryById(historyItem.id)">
+      <ReturnIcon />
+    </Button>
   </div>
 </template>
 <script setup lang="ts">
@@ -19,6 +22,9 @@ import type { HistoryItem } from '@/types/historyItem';
 import type { User } from '@/types/user';
 import { onMounted, ref } from 'vue';
 import { useCompaniesStore } from '@/stores/companyStores'
+//@ts-ignore
+import ReturnIcon from '@/assets/icons/return.svg?component';
+import Button from '@/components/Button.vue';
 
 const userStore = useUserStore();
 const companyStore = useCompaniesStore()
@@ -51,6 +57,7 @@ onMounted(async () => {
 const props = defineProps<{
   employer?: User;
   historyItem: HistoryItem;
+  deleteHistoryById?: (id: number) => Promise<void>;
 }>();
 </script>
 <style scoped>

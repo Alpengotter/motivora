@@ -6,7 +6,7 @@ import { useAuthStore } from '@/stores/useAuthStore'
 
 export const makeRequest = async <T>(
   endpoint: string,
-  method: 'get' | 'post' | 'put',
+  method: 'get' | 'post' | 'put' | 'delete',
   data?: unknown,
   responseType?: 'json' | 'blob' | 'arraybuffer' | 'document' | 'text' | 'stream',
 ): Promise<T> => {
