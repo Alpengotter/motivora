@@ -37,7 +37,7 @@ const surname = ref('');
 const firstName = ref('');
 const email = ref('');
 const department = ref('');
-const companies = ref<string[]>([]);
+const companies = ref<number | null>(null);
 
 const errors = ref({
   surname: '',
@@ -46,87 +46,20 @@ const errors = ref({
   department: ''
 });
 
-const validateEmail = (email: string): boolean => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-};
-
-const validateField = (field: string) => {
-  // FIXME: поправить типизацию
-  // @ts-ignore
-  errors.value[field] = '';
-
-  switch (field) {
-    case 'surname':
-      if (!surname.value) {
-        errors.value.surname = 'Фамилия обязательна';
-      } else if (surname.value.length < 2) {
-        errors.value.surname = 'Минимум 2 символа';
-      }
-      break;
-
-    case 'firstName':
-      if (!firstName.value) {
-        errors.value.firstName = 'Имя обязательно';
-      } else if (firstName.value.length < 2) {
-        errors.value.firstName = 'Минимум 2 символа';
-      }
-      break;
-
-    case 'email':
-      if (!email.value) {
-        errors.value.email = 'Email обязателен';
-      } else if (!validateEmail(email.value)) {
-        errors.value.email = 'Неверный формат email';
-      }
-      break;
-
-    case 'department':
-      if (department.value.length < 2) {
-        errors.value.department = 'Минимум 2 символа';
-      }
-      break;
-  }
-};
-
-const validateForm = () => {
-  validateField('surname');
-  validateField('firstName');
-  validateField('email');
-  validateField('department');
-};
-
-const isFormValid = computed(() => {
-  return (
-    surname.value &&
-    firstName.value &&
-    email.value &&
-    department.value &&
-    !errors.value.surname &&
-    !errors.value.firstName &&
-    !errors.value.email &&
-    !errors.value.department
-  );
-});
-
 const handleSubmit = async () => {
-  validateForm();
-
-  if (!isFormValid.value) {
-    return;
-  }
-
   const newUser: Omit<User, "id"> = {
-    firstName: firstName.value,
-    lastName: surname.value,
-    email: email.value,
-    clinics: companies.value,
+    firstName: firstName.value || '',
+    lastName: surname.value || '',
+    email: email.value || '',
+    clinics: companies.value ? [companies.value] : [],
     lemons: 0,
     diamonds: 0,
     userRole: "USER",
     isActive: true,
-    jobTitle: department.value
+    jobTitle: department.value || ''
   }
+
+  console.log(newUser)
 
   try {
     await userStore.addEmployer(newUser);
