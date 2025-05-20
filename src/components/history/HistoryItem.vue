@@ -1,23 +1,28 @@
 <template>
   <div class="history-item">
-    <div class="user-info">
-      <p class="user-fullname primary-text" v-if="title">{{ title }}</p>
-      <p class="user-email secondary-text" v-if="subtitle">{{ subtitle }}</p>
+    <div style="display: flex; flex-direction: row; justify-content: space-between; width: 100%; align-items: center">
+      <div class="user-info">
+        <p class="user-fullname primary-text" v-if="title">{{ title }}</p>
+        <p class="user-email secondary-text" v-if="subtitle">{{ subtitle }}</p>
+      </div>
+      <div style="display: flex; flex-direction: row; gap: 10px">
+        <p class="history-sum primary-text" v-if="historyItem.currency === 'lemons'">
+          {{ value }} <img src="@/assets/tooth.png" alt="lemon" width="18" height="18"/>
+        </p>
+        <p class="history-sum primary-text" v-if="historyItem.currency === 'diamonds'">
+          {{ value }} <img src="@/assets/gem.png" alt="lemon" width="18" height="18"/>
+        </p>
+        <Button
+          v-if="!employer"
+          appearance="secondary"
+          class="history-sum primary-text"
+          @click="deleteHistoryById(historyItem.id)">
+          <ReturnIcon />
+        </Button>
+      </div>
     </div>
     <p class="history-comment secondary-text">{{ comment }}</p>
-    <p class="history-sum primary-text" v-if="historyItem.currency === 'lemons'">
-      {{ value }} <img src="@/assets/tooth.png" alt="lemon" width="18" height="18"/>
-    </p>
-    <p class="history-sum primary-text" v-if="historyItem.currency === 'diamonds'">
-      {{ value }} <img src="@/assets/gem.png" alt="lemon" width="18" height="18"/>
-    </p>
-    <Button
-      v-if="!employer"
-      appearance="secondary"
-      class="history-sum primary-text"
-      @click="deleteHistoryById(historyItem.id)">
-      <ReturnIcon />
-    </Button>
+
   </div>
 </template>
 <script setup lang="ts">
@@ -67,9 +72,10 @@ const props = defineProps<{
 <style scoped>
 .history-item {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 10px 10px 0;
+  flex-direction: column;
+  align-items: flex-start;
+
+  gap: 4px;
 }
 
 .history-sum {
@@ -79,5 +85,14 @@ const props = defineProps<{
 
 .history-sum img {
   margin-left: 8px;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: row;
+}
+
+.history-comment {
+  text-overflow: ellipsis;
 }
 </style>

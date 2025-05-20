@@ -17,7 +17,6 @@
           Date(history[0].date)) }}</p>
       </div>
       <div class="history-list">
-
         <HistoryItem v-for="historyItem in history" :key="historyItem.id" :historyItem="historyItem"
           :employer="employer" :deleteHistoryById="deleteHistoryById"/>
       </div>
@@ -148,7 +147,10 @@ const props = defineProps<{
 }
 
 .history-list {
+  display: flex;
+  flex-direction: column;
   width: 100%;
+  gap: 18px;
 }
 
 .date {
