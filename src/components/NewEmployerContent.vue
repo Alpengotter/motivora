@@ -12,7 +12,7 @@
       <p class="error-message">{{ errors.email }}</p>
       <input v-model.trim="department" type="text" class="input" placeholder="Должность">
       <p class="error-message">{{ errors.department }}</p>
-      <Select v-model="companies" :options="companyStore.data" optionLabel="name" optionValue="id" placeholder="Выберите компанию" class="input"/>
+      <MultiSelect v-model="companies" :options="companyStore.data" optionLabel="name" optionValue="id" placeholder="Выберите компанию" class="input"/>
       <p class="error-message">{{ errors.department }}</p>
     </main>
     <footer>
@@ -27,7 +27,7 @@ import Button from '@/components/Button.vue';
 import { useUserStore } from '@/stores/userStores';
 import type { User } from '@/types/user';
 import { computed, onMounted, ref } from 'vue';
-import Select from 'primevue/select';
+import MultiSelect from 'primevue/multiselect';
 import { useCompaniesStore } from '@/stores/companyStores';
 
 const userStore = useUserStore();
@@ -37,7 +37,7 @@ const surname = ref('');
 const firstName = ref('');
 const email = ref('');
 const department = ref('');
-const companies = ref<number | null>(null);
+const companies = ref<number[]>([]);
 
 const errors = ref({
   surname: '',
@@ -51,7 +51,7 @@ const handleSubmit = async () => {
     firstName: firstName.value || '',
     lastName: surname.value || '',
     email: email.value || '',
-    clinics: companies.value ? [companies.value] : [],
+    clinics: companies.value,
     lemons: 0,
     diamonds: 0,
     userRole: "USER",

@@ -169,7 +169,10 @@ export const useUserStore = defineStore('users', {
       this.error = null
 
       try {
-        const response = await makeRequest<User>(`employers`, 'post', user)
+        const response = await makeRequest<User>(`employers`, 'post', {
+          ...user,
+          email: user.email || null,
+        })
 
         await this.searchEmployers({
           searchParameter: '',

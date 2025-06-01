@@ -31,7 +31,7 @@
     <div class="employers-list selected" v-if="selectedEmployersStore.selectedItems.length">
       <div class="accordion" :style="{ height: `${selectedEmployersStore.selectedItems.length * 15 + 72}px` }">
         <ListItemView v-for="(employee, index) in selectedEmployersStore.selectedItems.sort()" :id="employee.id"
-          :title="`${employee.lastName} ${employee.firstName}`" :subtitle="employee.email"
+          :title="`${employee.lastName} ${employee.firstName}`" :subtitle="employee?.jobTitle || ''"
           :description="getDescription(employee)" :wallet="[{ value: employee.lemons, currency: 'tooth' }]"
           :wallet-action="() => selectEmployer(employee)" v-bind:key="employee.id + 1000" class="accordion-item"
           show-checkbox :style="{ top: `${index * 15}px` }" />
@@ -41,16 +41,11 @@
       </div>
     </div>
 
-    <div class="employers-list" v-if="paginatedEmployees.length">
-      <ListItemView v-for="employee in paginatedEmployees" :id="employee.id"
-        :title="`${employee.lastName} ${employee.firstName}`" :subtitle="employee.email"
+    <div class="employers-list" v-if="filteredEmployees.length">
+      <ListItemView v-for="employee in filteredEmployees" :id="employee.id"
+        :title="`${employee.lastName} ${employee.firstName}`" :subtitle="employee?.jobTitle || ''"
         :description="getDescription(employee)" :wallet="[{ value: employee.lemons, currency: 'tooth' }]" show-checkbox
         :wallet-action="() => selectEmployer(employee)" v-bind:key="employee.id" />
-      <div v-if="hasMore" v-lazy-load="loadMore">
-        <div class="loading-spinner">
-          <Preloader :width="50" />
-        </div>
-      </div>
     </div>
 
     <div class="loading-spinner" v-else-if="userStore.loading">
@@ -60,6 +55,12 @@
       <span> Список сотрудников не загружен. </span>
       <span>Обратитесь в поддержку.</span>
     </div>
+
+    <Paginator v-model:first="first"
+               v-model:rows="rows"
+               :totalRecords="userStore.employerStatistic?.users"
+               :rowsPerPageOptions="[10, 25, 50]">
+    </Paginator>
 
     <!-- employer info modal -->
     <ModalView :show="isModalOpen" @close-modal="toggleModal" :user="selectedEmployer">
@@ -102,6 +103,7 @@ import EmployerModalContent from '@/components/EmployerModalContent.vue'
 import NewEmployerContent from '@/components/NewEmployerContent.vue'
 import Preloader from '@/components/Preloader.vue'
 import MultiSelect from 'primevue/multiselect'
+import Paginator from 'primevue/paginator';
 
 import type { User } from '@/types/user'
 import { useSelectedUsersStore } from '@/stores/selectedUsersStore'
@@ -126,9 +128,8 @@ const isModalHistoryOpen = ref(false)
 const isSelectMode = ref(false)
 const selectedEmployer = ref<User | undefined>(undefined)
 
-const currentPage = ref(0)
-const itemsPerPage = 25
-const hasMore = ref(true)
+const first = ref(0);
+const rows = ref(10);
 
 onMounted(async () => {
   await loadMore()
@@ -137,26 +138,12 @@ onMounted(async () => {
 })
 
 const getDescription = (u: User) => {
-  if (u.jobTitle) {
-    return u.jobTitle
-  }
-
   if (u.clinics.length) {
     return u.clinics.join(', ')
   }
 
   return ''
 }
-
-watch(
-  [searchQuery, filteredByCompany],
-  _.debounce(async () => {
-    currentPage.value = 0
-    hasMore.value = true
-    currentPage.value = 0
-    await loadMore()
-  }, 300),
-)
 
 const selectEmployer = (user: User): void => {
   selectedEmployer.value = user
@@ -189,30 +176,26 @@ const clearSelection = () => {
   selectedEmployersStore.selectedItems = []
 }
 
-const paginatedEmployees = computed(() => {
-  const start = (currentPage.value) * itemsPerPage
-  const end = start + itemsPerPage
-  return filteredEmployees.value.slice(0, end)
-})
-
 const loadMore = async () => {
-  if (userStore.loading || !hasMore.value) return
+  if (userStore.loading) return
 
-  try {
-    await userStore.searchEmployers({
-      searchParameter: searchQuery.value,
-      clinicIds: filteredByCompany.value || [],
-      page: currentPage.value,
-      size: itemsPerPage,
-      sort: ['lemons,desc']
-    }, )
-
-    currentPage.value += 1
-    hasMore.value = currentPage.value < Math.floor((userStore.employerStatistic?.users || 0) / itemsPerPage)
-  } catch (error) {
-    hasMore.value = false
-  }
+  await userStore.searchEmployers({
+    searchParameter: searchQuery.value,
+    clinicIds: filteredByCompany.value || [],
+    page: first.value / rows.value,
+    size: rows.value,
+    sort: ['lemons,desc']
+  })
 }
+
+watch([first, rows, searchQuery, filteredByCompany], () => {
+  loadMore()
+});
+
+watch([searchQuery, filteredByCompany], () => {
+  first.value = 0
+  loadMore()
+});
 
 const filteredEmployees = computed(() => {
   const query = searchQuery.value.toLowerCase().trim()

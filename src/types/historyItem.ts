@@ -1,6 +1,10 @@
 export interface HistoryItem {
   id: number
-  userId: number | null
+  user: {
+    firstName: string,
+    lastName: string,
+    surname: string
+  } | null;
   adminId: number
   date: string
   type: string
@@ -8,5 +12,7 @@ export interface HistoryItem {
   orderId: number | null
   currency: string
   value: number
-  clinicId: number | null
+  clinic: {
+    name: string
+  } | null
 }

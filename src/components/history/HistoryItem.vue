@@ -43,23 +43,15 @@ const comment = ref<string>();
 const value = ref<number>();
 
 onMounted(async () => {
-  if (props.historyItem.userId) {
-    const employer = userStore.getUserById(props.historyItem.userId) || undefined;
-    if (employer) {
-      title.value = `${employer.lastName} ${employer.firstName}`;
-      subtitle.value = `${employer.email || ''}`;
-      comment.value = `${props.historyItem.comment}`;
-      value.value = props.historyItem.value;
-    }
-
+  if (props.historyItem.user) {
+    title.value = `${props.historyItem.user.lastName} ${props.historyItem.user.firstName}`;
+    comment.value = `${props.historyItem.comment}`;
+    value.value = props.historyItem.value;
   }
-  if (props.historyItem.clinicId) {
-    const company = companyStore.getByIdState(props.historyItem.clinicId) || undefined;
-    if (company) {
-      title.value = `${company.name}`;
-      comment.value = `${props.historyItem.comment}`;
-      value.value = props.historyItem.value;
-    }
+  if (props.historyItem.clinic) {
+    title.value = `${props.historyItem.clinic.name}`;
+    comment.value = `${props.historyItem.comment}`;
+    value.value = props.historyItem.value;
   }
 })
 

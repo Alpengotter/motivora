@@ -32,7 +32,7 @@ export const useHistoryStores = defineStore('history', {
       this.error = null
       try {
         const response = await makeRequest<HistoryItem[]>(
-          `history/find-by-date-and-param?dateFrom=${dateFrom}&dateTo=${dateTo}&searchParameter=${searchParam}`,
+          `history/find-by-date-and-param?dateFrom=${dateFrom}&dateTo=${dateTo}&searchParameter=${searchParam}&clinicIds=1`,
           'get',
         )
 

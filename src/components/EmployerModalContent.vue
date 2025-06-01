@@ -109,14 +109,14 @@ const currencies = ['🦷'];
 
 const activeOperationIndex = ref(0);
 const activeCurrencyIndex = ref(0);
-const inputValue = ref<number>(0);
+const inputValue = ref<string>('');
 const employer = ref<User | undefined>(undefined);
 
 const commentValue = ref<string>('')
 const nominations = ref<Nomination | null>(null)
 
 watch(nominations, () => {
-  inputValue.value = nominations.value?.value || 0;
+  inputValue.value = nominations.value?.value.toString() || '';
 })
 
 onMounted(async () => {
@@ -145,15 +145,15 @@ const handleSubmit = async (employer: User | undefined) => {
   if (inputValue.value) {
     if (activeCurrencyIndex.value === 0) {
       if (activeOperationIndex.value === 0) {
-        lemons += inputValue.value;
+        lemons += parseInt(inputValue.value);
       } else {
-        lemons -= inputValue.value;
+        lemons -= parseInt(inputValue.value);
       }
     } else {
       if (activeOperationIndex.value === 0) {
-        diamonds += inputValue.value;
+        diamonds += parseInt(inputValue.value);
       } else {
-        diamonds -= inputValue.value;
+        diamonds -= parseInt(inputValue.value);
       }
     }
   }
@@ -170,7 +170,7 @@ const handleSubmit = async (employer: User | undefined) => {
     await props.updateWallet(employer.id, { lemons, diamonds, comment: `${nominations.value?.text || ''} ${commentValue.value || ''}` });
     await refresh();
 
-    inputValue.value = 0;
+    inputValue.value = '';
     commentValue.value = ''
   } catch (error) {
     console.error('Error updating wallet:', error);
