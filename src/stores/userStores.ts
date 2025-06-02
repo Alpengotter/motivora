@@ -1,6 +1,6 @@
 // stores/userStore.ts
 import { defineStore } from 'pinia'
-import { type User } from '@/types/user'
+import { type User, type UserResponse } from '@/types/user'
 import { makeRequest } from '@/utils/makeRequest'
 import type { Params } from '@/types/params'
 
@@ -82,6 +82,39 @@ export const useUserStore = defineStore('users', {
         this.employerStatistic = response
       } catch (error) {
         this.error = error instanceof Error ? error.message : 'Failed to fetch stat'
+      } finally {
+        this.loading = false
+      }
+    },
+
+    async updateEmployer(user: User) {
+      this.loading = true
+      this.error = null
+
+      try {
+        console.log(user)
+        const response = await makeRequest<User>(`employers/profile/${user.id}`, 'put', user)
+
+        if (response && response.id) {
+          const userId = response.id
+          const index = this.users.findIndex((user) => user.id === userId)
+          if (index !== -1) {
+            this.users[index] = { ...this.users[index], ...response }
+          }
+        }
+
+        await this.searchEmployers({
+          searchParameter: '',
+          clinicIds: [],
+          page: 0,
+          size: 25,
+          sort: ['lemons,desc']
+        })
+        await this.employersStat()
+
+        return response
+      } catch (error) {
+        this.error = error instanceof Error ? error.message : 'Failed to update wallet'
       } finally {
         this.loading = false
       }

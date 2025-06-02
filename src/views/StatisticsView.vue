@@ -20,14 +20,11 @@ const toggleFullPageCard = () => {
 
 onMounted(async () => {
   try {
-    await statisticsStore.fetchStatisticsSummary(['lemons_accrued', 'lemons_spend'], currentYear)
+    await statisticsStore.fetchStatisticsSummary(['lemons_accrued_by_user', 'lemons_accrued_by_clinic'], currentYear)
   } catch (error) {
     console.error(error)
   }
 });
-
-const startMounth = new Date().getMonth() >= 6 ? 6 : 0;
-const endMounth = new Date().getMonth() <= 6 ? 6 : 11;
 
 </script>
 
@@ -38,7 +35,7 @@ const endMounth = new Date().getMonth() <= 6 ? 6 : 11;
     </div>
   </header>
   <main>
-    <Card v-for="item in statisticsStore.summary" :key="item.total" :data="item" :range="[startMounth, endMounth]" @open-modal="openFullpageModal(item.type)"/>
+    <Card v-for="item in statisticsStore.summary" :key="item.total" :data="item" :range="[0, 12]" @open-modal="openFullpageModal(item.type)"/>
     <StatisticModal :type="selectedType" @close-modal="toggleFullPageCard" v-if="isOpenFullPage && selectedType"/>
   </main>
 </template>

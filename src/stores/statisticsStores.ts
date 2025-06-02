@@ -39,7 +39,36 @@ export const useStatisticsStores = defineStore('statistics', {
         if (single) {
           return response;
         } else {
-          this.summary = response;
+          this.summary = response
+        }
+      } catch (error) {
+        this.error = error instanceof Error ? error.message : 'Failed to fetch orders'
+      } finally {
+        this.loading = false
+      }
+    },
+
+    async fetchStatisticsSummaryNew(year: number, single?: boolean) {
+      this.loading = true
+      this.error = null
+      try {
+        const params = new URLSearchParams()
+        params.set('year', year.toString())
+
+        const response = await makeRequest<StatisticsSummaryResponse[]>(
+          `analitique/get-analitique-summary-comment?${params.toString()}`,
+          'get',
+        )
+
+        if (single) {
+          return response;
+        } else {
+          if (this.summary.length > 0) {
+            this.summary = [...this.summary, ...response];
+          } else {
+            this.summary = response
+          }
+
         }
       } catch (error) {
         this.error = error instanceof Error ? error.message : 'Failed to fetch orders'

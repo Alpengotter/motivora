@@ -36,6 +36,11 @@ export const useCompaniesStore = defineStore('companies', {
         return state.data.find((c) => c.id === id) || null
       }
     },
+    getByNameState: (state) => {
+      return (name: string) => {
+        return state.data.find((c) => c.name === name) || null
+      }
+    },
   },
 
   actions: {
