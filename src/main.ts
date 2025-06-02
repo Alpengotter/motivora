@@ -11,6 +11,7 @@ import { useAuthStore } from '@/stores/useAuthStore'
 
 import { createVuestic } from "vuestic-ui";
 import "vuestic-ui/css";
+import 'primeicons/primeicons.css';
 
 import PrimeVue from 'primevue/config';
 import Aura from '@primeuix/themes/aura';

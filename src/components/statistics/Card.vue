@@ -60,8 +60,9 @@ const emitClose = () => {
 .title {
   font-style: normal;
   font-weight: 300;
-  font-size: 24px;
+  font-size: 16px;
 
+  margin-bottom: 1rem;
   color: #000000;
 }
 

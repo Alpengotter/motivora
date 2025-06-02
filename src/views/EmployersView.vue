@@ -66,7 +66,9 @@
     <ModalView :show="isModalOpen" @close-modal="toggleModal" :user="selectedEmployer">
       <template #content>
         <EmployerModalContent :employerId="selectedEmployer!.id" :updateWallet="userStore.updateWallet"
-          :close="toggleModal" />
+          :close="toggleModal"
+          :edit="toggleEditModal"
+        />
       </template>
     </ModalView>
 
@@ -74,6 +76,13 @@
     <ModalView :show="isModalAddNewOpen" @close-modal="toggleAddNewModal">
       <template #content>
         <NewEmployerContent :close="toggleAddNewModal" />
+      </template>
+    </ModalView>
+
+    <!-- edit employer -->
+    <ModalView :show="isModalEditOpen" @close-modal="toggleEditModal">
+      <template #content>
+        <EditEmployerContent :close="toggleEditModal" :employer-id="selectedEmployer!.id"/>
       </template>
     </ModalView>
 
@@ -112,6 +121,7 @@ import { useCompaniesStore } from '@/stores/companyStores'
 import ListItemView from '@/components/ListItemView.vue'
 import HistoryModal from '@/components/modals/HistoryModal.vue'
 import _ from 'lodash'
+import EditEmployerContent from '@/components/EditEmployerContent.vue'
 
 const userStore = useUserStore()
 const companiesStore = useCompaniesStore()
@@ -122,6 +132,7 @@ const filteredByCompany = ref(null)
 
 const isModalOpen = ref(false)
 const isModalAddNewOpen = ref(false)
+const isModalEditOpen = ref(false)
 const isModalMultipleOpen = ref(false)
 const isModalHistoryOpen = ref(false)
 
@@ -156,6 +167,10 @@ const toggleModal = () => {
 
 const toggleAddNewModal = () => {
   isModalAddNewOpen.value = !isModalAddNewOpen.value
+}
+
+const toggleEditModal = () => {
+  isModalEditOpen.value = !isModalEditOpen.value
 }
 
 const toggleMultipleModal = () => {

@@ -1,6 +1,8 @@
 const translateStatistics = {
   LEMONS_ACCRUED: 'Зубов начислено',
   LEMONS_SPEND: 'Зубов потрачено',
+  LEMONS_ACCRUED_BY_USER: 'Зубов начислено (индивидуальный)',
+  LEMONS_ACCRUED_BY_CLINIC: 'Зубов начислено (командный)'
 }
 
 type TranslationKey = keyof typeof translateStatistics;

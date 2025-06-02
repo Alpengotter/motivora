@@ -87,6 +87,9 @@
         </svg>
 
         <span class="button-title" @click="deactivate">Деактивировать</span></Button>
+      <Button appearance="secondary">
+        <i class="pi pi-pencil"></i>
+        <span class="button-title" @click="handleEdit">Редактировать</span></Button>
     </footer>
   </div>
 </template>
@@ -204,10 +207,16 @@ const deactivate = async () => {
   }
 }
 
+const handleEdit = () => {
+  props.edit();
+  props.close();
+}
+
 
 const props = defineProps<{
   employerId: number,
   close: () => void;
+  edit: () => void;
   updateWallet: (id: number, wallet: {
     lemons: number;
     diamonds: number;
@@ -217,6 +226,17 @@ const props = defineProps<{
 </script>
 
 <style scoped lang="scss">
+
+footer {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  bottom: 28px;
+  width: 100%;
+
+  gap: 1rem;
+}
+
 .nominations {
   display: flex;
   width: 100%;
@@ -244,14 +264,8 @@ main {
   display: flex;
   flex-direction: column;
   flex: 1;
-}
 
-footer {
-  display: flex;
-  justify-content: center;
-  position: absolute;
-  bottom: 28px;
-  width: 100%;
+  padding-bottom: 64px;
 }
 
 .wrapper {
@@ -296,7 +310,6 @@ footer {
   flex-direction: column;
   align-items: center;
   gap: 0.5rem;
-  margin-bottom: 1rem;
 }
 
 .actions {
@@ -322,7 +335,7 @@ footer {
   line-height: 18px;
   text-align: center;
 
-  padding: 32px 0;
+  padding: 16px 0;
 }
 
 .deactivate {

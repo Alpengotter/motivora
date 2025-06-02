@@ -59,7 +59,6 @@ export const useHistoryStores = defineStore('history', {
             if (a.date > b.date) return -1
             return 0
           })
-          .slice(0, 5)
       } catch (error) {
         this.error = error instanceof Error ? error.message : 'Failed to fetch history by employer'
       } finally {
