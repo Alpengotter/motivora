@@ -1,10 +1,8 @@
+import type { User } from '@/types/user'
+
 export interface HistoryItem {
   id: number
-  user: {
-    firstName: string,
-    lastName: string,
-    surname: string
-  } | null;
+  user: User | null;
   adminId: number
   date: string
   type: string

@@ -20,7 +20,9 @@ export const makeRequest = async <T>(
 
   const headers = {
     'Content-Type': 'application/json',
-    Authorization: `Bearer ${authStore.token}`,
+    ...(!endpoint.includes('find-by-date-and-param') && authStore.token && {
+      Authorization: `Bearer ${authStore.token}`,
+    }),
   };
 
   try {

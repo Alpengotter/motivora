@@ -23,9 +23,23 @@ export const useAuthStore = defineStore('auth', {
     isAuthenticated(state): boolean {
       return !!state.token;
     },
+    isShared(state): boolean {
+      if (state.token) {
+        return state.token.includes('share');
+      }
+
+      return false;
+    }
   },
 
   actions: {
+    setSharedToken (token: string) {
+      if (!token) {
+        throw new Error('Invalid token received');
+      }
+      this.token = token;
+    },
+
     validateEmail(email: string): boolean {
       const emailRegex = /^[a-zA-Z0-9._-]+@zarplata.ru$/;
       return emailRegex.test(email);

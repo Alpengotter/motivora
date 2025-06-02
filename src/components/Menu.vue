@@ -1,11 +1,12 @@
 <template>
-  <div class="menu glass" v-if="isAuthenticated">
+  <div class="menu glass"  v-if="isAuthenticated && !isShared">
     <nav>
 <!--      <RouterLink to="/" class="nav-item" active-class="active">Заказы</RouterLink>-->
       <RouterLink to="/" class="nav-item" active-class="active">Сотрудники</RouterLink>
       <RouterLink to="/companies" class="nav-item" active-class="active">Клиники</RouterLink>
       <RouterLink to="/statistics" class="nav-item" active-class="active">Статистика</RouterLink>
       <RouterLink to="/reports" class="nav-item" active-class="active">Отчеты</RouterLink>
+      <RouterLink to="/shared-table" class="nav-item" active-class="active">Таблица</RouterLink>
     </nav>
   </div>
 </template>
@@ -15,7 +16,7 @@ import { useAuthStore } from '@/stores/useAuthStore'
 import { storeToRefs } from 'pinia'
 
 const authStore = useAuthStore()
-const { isAuthenticated } = storeToRefs(authStore)
+const { isAuthenticated, isShared } = storeToRefs(authStore)
 </script>
 
 
