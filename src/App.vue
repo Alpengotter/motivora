@@ -20,13 +20,6 @@ const logout = () => {
 }
 
 onMounted(() => {
-  authStore.checkAuth()
-  if (authStore.token) {
-    router.push('/')
-  } else {
-    authStore.logout()
-    router.push('/login')
-  }
 });
 </script>
 
@@ -41,7 +34,7 @@ onMounted(() => {
       <div class="header__menu">
         <Menu />
         <!-- <div class="header__profile glass">🔔</div> -->
-        <div class="header__profile glass" @click="toggleShowProfileMenu">
+        <div class="header__profile glass" @click="toggleShowProfileMenu" v-if="!authStore.isShared">
           <img style="width: 20px; height: 20px;"  src="@/assets/technologist.png" alt="technologist" />
         </div>
         <div class="header-profile-menu" v-if="showProfileMenu">
@@ -60,7 +53,7 @@ onMounted(() => {
 
 
     <footer>
-      <div class="footer-container">
+      <div class="footer-container" v-if="authStore.isAuthenticated && !authStore.isShared">
         <img alt="Vue logo" class="header__logo" src="@/assets/logo-brand.png" width="183" height="50" />
         <a href="mailto:hello@alpengotter.ru" class="primary-text">hello@alpengotter.ru</a>
       </div>

@@ -10,6 +10,10 @@ export const NOMINATIONS_PERSONAL: Nomination[] = [
     value: 20,
   },
   {
+    text: 'Менти - завершенный контракт +20',
+    value: 15,
+  },
+  {
     text: 'Менти - завершенный контракт +15',
     value: 15,
   },

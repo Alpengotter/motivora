@@ -6,6 +6,9 @@ import ReportsView from '@/views/ReportsView.vue'
 import OrdersView from '@/views/OrdersView.vue'
 import { useAuthStore } from '@/stores/useAuthStore'
 import CompaniesView from '@/views/CompaniesView.vue'
+import SharedTable from '@/views/SharedTable.vue'
+import Cookies from 'js-cookie'
+import { omit } from 'lodash'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -46,12 +49,35 @@ const router = createRouter({
       component: CompaniesView,
       meta: { requiresAuth: false, roles: ['ADMIN'] },
     },
+    {
+      path: '/shared-table',
+      name: 'shared-table',
+      component: SharedTable,
+      meta: { requiresAuth: false },
+    },
   ],
 })
 
 router.beforeEach((to, from, next) => {
   const userRoles = ['ADMIN']
   const authStore = useAuthStore()
+  const sharedToken = to.query['token'];
+
+  if (sharedToken && to.path === '/shared-table') {
+    const existingToken = Cookies.get('token')
+
+    if (!existingToken) {
+      Cookies.set('token', sharedToken as string + '_shared', {
+        expires: 7
+      });
+      authStore.setSharedToken(sharedToken as string)
+    }
+
+    return next({
+      ...to,
+      query: omit(to.query, 'token')
+    })
+  }
 
   if (to.matched.some((record) => record.meta.requiresAuth)) {
     if (!authStore.isAuthenticated) {
@@ -59,10 +85,9 @@ router.beforeEach((to, from, next) => {
     }
 
     if (to.meta.roles) {
-      // Если для страницы заданы роли, проверяем доступ
       const hasRole = (to.meta.roles as Array<string>).some((role) => userRoles.includes(role))
       if (!hasRole) {
-        return next({ name: 'home' })
+        return next({ name: '/' })
       }
     }
   }
