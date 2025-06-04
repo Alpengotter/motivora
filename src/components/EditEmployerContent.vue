@@ -20,10 +20,10 @@
 <script setup lang="ts">
 import Button from '@/components/Button.vue';
 import { useUserStore } from '@/stores/userStores';
-import type { User, UserResponse } from '@/types/user'
-import { computed, onMounted, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import MultiSelect from 'primevue/multiselect';
 import { useCompaniesStore } from '@/stores/companyStores';
+import type { UserResponse } from '@/types/user'
 
 const userStore = useUserStore();
 const companyStore = useCompaniesStore();
@@ -43,22 +43,22 @@ const employer = userStore.getUserById(props.employerId)
 
 onMounted(() => {
   if (employer) {
-    const clinicIds: number[] = employer.clinics
+    const clinicIds: number[] = (employer.clinics || [])
       .map(clinic => companyStore.getByNameState(clinic as string))
       .filter(c => c !== null)
       .map(clinic => clinic.id);
 
-    surname.value = employer.lastName;
-    firstName.value = employer.firstName;
-    email.value = employer.email;
-    department.value = employer.jobTitle;
+    surname.value = employer.lastName || '';
+    firstName.value = employer.firstName || '';
+    email.value = employer.email || '';
+    department.value = employer.jobTitle || '';
     companies.value = clinicIds;
   }
 })
 
 const handleSubmit = async () => {
   console.log('submit')
-  const u = {
+  const u: UserResponse = {
     ...employer,
     firstName: firstName.value || employer!.firstName,
     lastName: surname.value || employer!.lastName,

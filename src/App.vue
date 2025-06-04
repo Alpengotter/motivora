@@ -27,9 +27,9 @@ onMounted(() => {
   <div class="app-wrapper">
 
     <header class="header">
-      <RouterLink to="/" class="header__logo-link">
-        <img alt="Vue logo" class="header__logo" src="@/assets/logo.png" width="183" height="50" />
-      </RouterLink>
+      <div class="header__logo-link">
+        <img alt="Vue logo" class="header__logo" src="@/assets/logo-brand.png" width="183" height="50" />
+      </div>
 
       <div class="header__menu">
         <Menu />
@@ -53,8 +53,7 @@ onMounted(() => {
 
 
     <footer>
-      <div class="footer-container" v-if="authStore.isAuthenticated && !authStore.isShared">
-        <img alt="Vue logo" class="header__logo" src="@/assets/logo-brand.png" width="183" height="50" />
+      <div class="footer-container">
         <a href="mailto:hello@alpengotter.ru" class="primary-text">hello@alpengotter.ru</a>
       </div>
     </footer>

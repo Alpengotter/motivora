@@ -10,7 +10,7 @@
           :count="companiesStore.statistic?.users"
           icon="employer"
         />
-        <StatisticItem title="Зубов" :count="companiesStore.statistic?.lemons" icon="lemons" />
+        <StatisticItem title="Мотикоинов" :count="companiesStore.statistic?.lemons" icon="lemons" />
       </div>
     </div>
     <div class="actions-wrapper">

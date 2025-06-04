@@ -20,7 +20,7 @@ const toggleFullPageCard = () => {
 
 onMounted(async () => {
   try {
-    await statisticsStore.fetchStatisticsSummary(['lemons_accrued_by_user', 'lemons_accrued_by_clinic'], currentYear)
+    await statisticsStore.fetchStatisticsSummary(['lemons_accrued_by_user'], currentYear)
   } catch (error) {
     console.error(error)
   }

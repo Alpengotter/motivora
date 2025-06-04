@@ -6,7 +6,7 @@
       </div>
       <div class="statistic-container">
         <StatisticItem title="Сотрудников" :count="userStore.employerStatistic?.users" icon="employer" />
-        <StatisticItem title="Зубов" :count="userStore.employerStatistic?.lemons" icon="lemons" />
+        <StatisticItem title="Мотикоинов" :count="userStore.employerStatistic?.lemons" icon="lemons" />
       </div>
     </div>
     <div class="actions-wrapper">

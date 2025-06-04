@@ -32,7 +32,7 @@ const downloadResourceTransactions = (year?: number) => downloadFile('reports/re
     </div>
   </header>
   <main>
-    <ReportItem title="Отчет по количеству зубов в разрезе по сотрудникам" :can-select-year="false" :on-download="downloadEmployeeResources"/>
+    <ReportItem title="Отчет по количеству мотикоинов в разрезе по сотрудникам" :can-select-year="false" :on-download="()=>{}"/>
 <!--    <ReportItem title="Отчет по обработанным заявкам по месяцам за выбранный год" :can-select-year="true" :on-download="downloadOrders" />-->
 <!--    <ReportItem title="Отчет по количеству потраченных/начисленных зубов по месяцам за выбранный год" :can-select-year="true" :on-download="downloadResourceTransactions" />-->
   </main>

@@ -87,7 +87,7 @@ export const useUserStore = defineStore('users', {
       }
     },
 
-    async updateEmployer(user: User) {
+    async updateEmployer(user: UserResponse) {
       this.loading = true
       this.error = null
 
