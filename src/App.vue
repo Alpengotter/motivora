@@ -54,7 +54,7 @@ onMounted(() => {
 
     <footer>
       <div class="footer-container">
-        <a href="mailto:hello@alpengotter.ru" class="primary-text">hello@alpengotter.ru</a>
+        <a href="mailto:hello@alpengotter.com" class="primary-text">hello@alpengotter.ru</a>
       </div>
     </footer>
   </div>

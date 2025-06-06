@@ -108,7 +108,7 @@ import type { Nomination } from '@/types/nomination'
 const userStore = useUserStore();
 
 const operations = ['+', '-'];
-const currencies = ['🦷'];
+const currencies = ['M'];
 
 const activeOperationIndex = ref(0);
 const activeCurrencyIndex = ref(0);
